@@ -1,0 +1,13 @@
+[wrap-file]
+directory = openal-soft-1.24.2
+source_url = https://github.com/kcat/openal-soft/archive/refs/tags/1.24.2.tar.gz
+source_filename = openal-soft-1.24.2.tar.gz
+source_hash = 7efd383d70508587fbc146e4c508771a2235a5fc8ae05bf6fe721c20a348bd7c
+patch_filename = openal-soft_1.24.2-1_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/openal-soft_1.24.2-1/get_patch
+patch_hash = fc23fdf8760b4e11ca7618dcf00c295fafc114da94c9807511f52f7b853e9de6
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/openal-soft_1.24.2-1/openal-soft-1.24.2.tar.gz
+wrapdb_version = 1.24.2-1
+
+[provide]
+openal = openal_dep

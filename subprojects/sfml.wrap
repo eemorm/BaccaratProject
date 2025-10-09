@@ -1,0 +1,13 @@
+[wrap-file]
+directory = SFML-2.6.2
+source_url = https://github.com/SFML/SFML/archive/refs/tags/2.6.2.tar.gz
+source_filename = 2.6.2.tar.gz
+source_hash = 15ff4d608a018f287c6a885db0a2da86ea389e516d2323629e4d4407a7ce047f
+patch_filename = sfml_2.6.2-1_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/sfml_2.6.2-1/get_patch
+patch_hash = 36737f7fc6d616be791c6901b15414315b3a77df82dabc80b151d628e5d48386
+source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/sfml_2.6.2-1/2.6.2.tar.gz
+wrapdb_version = 2.6.2-1
+
+[provide]
+sfml = sfml_dep
