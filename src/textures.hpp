@@ -17,7 +17,6 @@ void splitTextures(sf::Texture texture, int sections, std::vector<sf::Sprite>* d
         sf::Sprite sprite;
         sprite.setTexture(texture);
 
-        // Define the section of the spritesheet to use
         sprite.setTextureRect(sf::IntRect(i * size, 0, size, size));
 
         destination->push_back(sprite);
