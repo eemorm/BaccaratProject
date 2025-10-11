@@ -9,7 +9,7 @@
 class Card : public sf::Drawable
 {
     private:
-        bool show = false;
+        bool show = true;
     
         sf::Sprite background;
         sf::Sprite number;
@@ -66,8 +66,8 @@ class Card : public sf::Drawable
         {
             position = {x, y};
             background.setPosition(position);
-            number.setPosition(position.x + 60, position.y + 60);
-            suit.setPosition(position);
+            number.setPosition(position.x + 64, position.y + 2);
+            suit.setPosition(position.x + 34, position.y + 43);
             backside.setPosition(position);
         }
 };

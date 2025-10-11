@@ -24,6 +24,15 @@ int main() // main function, where the flow of the game starts
 
     loadTextures(); // load game textures
 
+    Card card(theDealerBackground, 
+        theDealerNumbers[0], 
+        theDealerSuits[0], 
+        theDealerBackground, 
+        sf::Color::White, 
+        sf::Color::White, 
+        sf::Color::White, 
+        sf::Color::White);
+
     while (window.isOpen()) // loop when the window is open
     {
         sf::Event event; // declare an event for when an event happens
@@ -36,7 +45,10 @@ int main() // main function, where the flow of the game starts
             }      
         }
 
-        window.clear(sf::Color::Black); // clear window
+        window.clear(sf::Color::White); // clear window
+
+        card.render(700, 400);
+        window.draw(card);
 
         window.display(); // display output
     }
