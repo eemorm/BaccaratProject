@@ -1,3 +1,4 @@
+#include "textures.hpp"
 #include "Classes/Card.hpp"
 
 // SFML
@@ -20,6 +21,8 @@ int main() // main function, where the flow of the game starts
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "BaccaratProject", sf::Style::Close); // declare window
 
     window.setFramerateLimit(60); // set fps limit to avoid too much GPU stress
+
+    loadTextures(); // load game textures
 
     while (window.isOpen()) // loop when the window is open
     {
