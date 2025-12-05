@@ -28,6 +28,19 @@ int main() // main function, where the flow of the game starts
 
     loadTextures(); // load game textures
 
+    sf::Shader pixelDitherShader;
+    if (!pixelDitherShader.loadFromFile("shaders/pixel_dither.frag", sf::Shader::Fragment))
+    {
+        std::cerr << "Failed to load shader\n";
+    }
+
+    sf::RenderTexture sceneTexture;
+    if (!sceneTexture.create(SCREEN_WIDTH, SCREEN_HEIGHT))
+    {
+        std::cerr << "Failed to create render texture\n";
+    }
+    sf::Sprite sceneSprite(sceneTexture.getTexture());
+
     Card card(theDealerBackground, 
         theDealerNumbers[0], 
         theDealerSuits[0], 
@@ -79,13 +92,24 @@ int main() // main function, where the flow of the game starts
         lighting.clearDynamicLights();
         lighting.addDynamicLight( Light(mousePos, 250.f, 1.0f, sf::Color::White) );
 
+        pixelDitherShader.setUniform("texture", sf::Shader::CurrentTexture);
+        pixelDitherShader.setUniform("resolution", sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+        pixelDitherShader.setUniform("pixelSize", 4.f); // Bigger number = blockier pixels
+
         lighting.update();
-        window.clear(sf::Color::White); // clear window
+        sceneTexture.clear(sf::Color::White); // clear window
 
-        window.draw(lighting);
-        window.draw(card);
+        sceneTexture.draw(lighting);
+        sceneTexture.draw(card);
 
-        window.display(); // display output
+        sceneTexture.display(); // display output
+
+        sf::RenderStates renderStates;
+        renderStates.shader = &pixelDitherShader;
+
+        window.clear();
+        window.draw(sceneSprite, renderStates);
+        window.display();
     }
     
     return 0; // return 0 to finish the main function when the game is quit
