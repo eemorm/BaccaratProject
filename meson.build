@@ -4,9 +4,8 @@ project('BaccaratProject', 'cpp',
 )
 
 sfml_graphics = dependency('sfml-graphics')
-sfml_audio    = dependency('sfml-audio')
 sfml_network  = dependency('sfml-network')
 
 executable('BaccaratProject', 'src/main.cpp',
-  dependencies : [sfml_graphics, sfml_audio, sfml_network]
+  dependencies : [sfml_graphics, sfml_network]
 )

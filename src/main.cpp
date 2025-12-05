@@ -39,6 +39,16 @@ int main() // main function, where the flow of the game starts
         
         while (window.pollEvent(event)) // check if window events pressed, i.e. close window
         {
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+            {
+                float mx = event.mouseButton.x;
+                float my = event.mouseButton.y;
+
+                if (card.isMouseOver(mx, my))
+                {
+                    card.onClick();
+                }
+            }
             if (event.type == sf::Event::Closed) // check if window close pressed
             {
                 window.close(); // close window

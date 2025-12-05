@@ -1,12 +1,15 @@
 #pragma once
 
+// Custom Includes
+#include "Interfaces/IClickable.hpp"
+
 // SFML
 #include <SFML/Graphics.hpp>
 
 // Standard Libraries
 #include <iostream>
 
-class Card : public sf::Drawable
+class Card : public sf::Drawable, public IClickable
 {
     private:
         bool show = true;
@@ -69,5 +72,17 @@ class Card : public sf::Drawable
             number.setPosition(position.x + 64, position.y + 2);
             suit.setPosition(position.x + 34, position.y + 43);
             backside.setPosition(position);
+        }
+
+        bool isMouseOver(float mx, float my) override
+        {
+            sf::FloatRect bounds = background.getGlobalBounds();
+            return bounds.contains(mx, my);
+        }
+
+        void onClick() override
+        {
+            flip();
+            std::cout << "Card clicked!\n";
         }
 };
