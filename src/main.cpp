@@ -1,6 +1,7 @@
 // Custom Includes
 #include "textures.hpp"
 #include "Classes/Card.hpp"
+#include "Classes/Chip.hpp"
 #include "Classes/Interfaces/IObjectAction.hpp"
 #include "Classes/LightSystem.hpp"
 
@@ -58,13 +59,26 @@ int main() // main function, where the flow of the game starts
         sf::Color::White, 
         sf::Color::White, 
         sf::Color::White);
+    Chip chip(theDealerBackground);
 
     std::vector<IObjectAction*> clickables;
 
     card.setPosition({700, 400});
+    chip.setPosition({500, 300});
     clickables.push_back(&card);
+    clickables.push_back(&chip);
 
     sf::Vector2f mousePos;
+
+    sf::Font font;
+    if (!font.loadFromFile("fonts/sharetech.ttf")) {
+        std::cerr << "Failed to load font\n";
+    }
+
+    sf::Text cursorText;
+    cursorText.setFont(font);
+    cursorText.setCharacterSize(24);
+    cursorText.setFillColor(sf::Color::Blue);
 
     lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White));
 
@@ -110,12 +124,16 @@ int main() // main function, where the flow of the game starts
 
         // --- RENDER WORLD PASS ---------------------------------------
         worldRT.clear(sf::Color::White);
+
         table.setScale(1.6f, 1.6f);
         sf::Vector2u texSize = table.getTexture()->getSize();
         table.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
         table.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 190);
+
         worldRT.draw(table);
         worldRT.draw(card);
+        worldRT.draw(chip);
+
         worldRT.display();
 
         // --- SHADER UNIFORMS -----------------------------------------
@@ -132,6 +150,12 @@ int main() // main function, where the flow of the game starts
         ditherRT.display();
 
         // --- FINAL COMPOSITE -----------------------------------------
+        cursorText.setString(
+                "X: " + std::to_string((int)mousePos.x) +
+                " Y: " + std::to_string((int)mousePos.y)
+            );
+            cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
+
         window.clear();
 
         window.draw(worldSprite);
@@ -139,6 +163,8 @@ int main() // main function, where the flow of the game starts
         sf::RenderStates lightState;
         lightState.blendMode = sf::BlendMultiply;
         window.draw(sf::Sprite(ditherRT.getTexture()), lightState);
+
+        window.draw(cursorText);
 
         window.display();
     }
