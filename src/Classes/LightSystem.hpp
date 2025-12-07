@@ -88,6 +88,6 @@ class LightSystem : public sf::Drawable
         }
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
         {
-            target.draw(maskSprite, sf::BlendMultiply);
+            target.draw(maskSprite);
         }
 };

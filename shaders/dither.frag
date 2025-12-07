@@ -1,7 +1,6 @@
 // pixel_dither_fade.frag
 uniform sampler2D texture;   // scene texture
 uniform vec2 resolution;     // screen resolution
-uniform float pixelSize;     // size of pixel blocks
 
 // 4x4 Bayer matrix constants
 const float d00 = 0.0/16.0;  const float d01 = 8.0/16.0;  const float d02 = 2.0/16.0;  const float d03 = 10.0/16.0;
@@ -20,10 +19,7 @@ float getThreshold(int x, int y)
 
 void main()
 {
-    // Pixelation
-    vec2 pix = floor(gl_FragCoord.xy / pixelSize) * pixelSize;
-    vec2 uv = pix / resolution;
-
+    vec2 uv = gl_FragCoord.xy / resolution;
     vec4 color = texture2D(texture, uv);
 
     // Bayer dithering

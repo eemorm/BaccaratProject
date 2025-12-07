@@ -28,18 +28,27 @@ int main() // main function, where the flow of the game starts
 
     loadTextures(); // load game textures
 
-    sf::Shader pixelDitherShader;
-    if (!pixelDitherShader.loadFromFile("shaders/pixel_dither.frag", sf::Shader::Fragment))
+    sf::Shader ditherShader;
+    if (!ditherShader.loadFromFile("shaders/dither.frag", sf::Shader::Fragment))
+    {
+        std::cerr << "Failed to load shader\n";
+    }
+    sf::Shader pixelationShader;
+    if (!pixelationShader.loadFromFile("shaders/pixelation.frag", sf::Shader::Fragment))
     {
         std::cerr << "Failed to load shader\n";
     }
 
-    sf::RenderTexture sceneTexture;
-    if (!sceneTexture.create(SCREEN_WIDTH, SCREEN_HEIGHT))
-    {
-        std::cerr << "Failed to create render texture\n";
-    }
-    sf::Sprite sceneSprite(sceneTexture.getTexture());
+    sf::RenderTexture lightingRT;
+    sf::RenderTexture worldRT;
+    sf::RenderTexture ditherRT;
+
+    lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    worldRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    ditherRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    sf::Sprite lightingSprite(lightingRT.getTexture());
+    sf::Sprite worldSprite(worldRT.getTexture());
 
     Card card(theDealerBackground, 
         theDealerNumbers[0], 
@@ -89,26 +98,43 @@ int main() // main function, where the flow of the game starts
             }      
         }
 
+        // --- UPDATE LIGHTING ----------------------------------------
         lighting.clearDynamicLights();
-        lighting.addDynamicLight( Light(mousePos, 250.f, 1.0f, sf::Color::White) );
-
-        pixelDitherShader.setUniform("texture", sf::Shader::CurrentTexture);
-        pixelDitherShader.setUniform("resolution", sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-        pixelDitherShader.setUniform("pixelSize", 4.f); // Bigger number = blockier pixels
-
+        lighting.addDynamicLight(Light(mousePos, 250.f, 1.0f, sf::Color::White));
         lighting.update();
-        sceneTexture.clear(sf::Color::White); // clear window
 
-        sceneTexture.draw(lighting);
-        sceneTexture.draw(card);
+        // --- RENDER LIGHTING PASS ------------------------------------
+        lightingRT.clear(sf::Color::Black);
+        lightingRT.draw(lighting);
+        lightingRT.display();
 
-        sceneTexture.display(); // display output
+        // --- RENDER WORLD PASS ---------------------------------------
+        worldRT.clear(sf::Color::White);
+        worldRT.draw(card);
+        worldRT.display();
 
-        sf::RenderStates renderStates;
-        renderStates.shader = &pixelDitherShader;
+        // --- SHADER UNIFORMS -----------------------------------------
+        ditherShader.setUniform("texture", lightingRT.getTexture());
+        ditherShader.setUniform("resolution", sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
+        pixelationShader.setUniform("texture", worldRT.getTexture());
+        pixelationShader.setUniform("resolution", sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+        pixelationShader.setUniform("pixelSize", 4.f);
+
+        // --- RENDER DITHER SHADER PASS -------------------------------
+        ditherRT.clear(sf::Color::Transparent);
+        ditherRT.draw(lightingSprite, &ditherShader);
+        ditherRT.display();
+
+        // --- FINAL COMPOSITE -----------------------------------------
         window.clear();
-        window.draw(sceneSprite, renderStates);
+
+        window.draw(worldSprite);
+
+        sf::RenderStates lightState;
+        lightState.blendMode = sf::BlendMultiply;
+        window.draw(sf::Sprite(ditherRT.getTexture()), lightState);
+
         window.display();
     }
     
