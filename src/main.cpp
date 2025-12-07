@@ -66,7 +66,7 @@ int main() // main function, where the flow of the game starts
 
     sf::Vector2f mousePos;
 
-    lighting.addStaticLight(Light({700, 400}, 300.f, 1.0f, sf::Color::White));
+    lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White));
 
     while (window.isOpen()) // loop when the window is open
     {
@@ -110,6 +110,11 @@ int main() // main function, where the flow of the game starts
 
         // --- RENDER WORLD PASS ---------------------------------------
         worldRT.clear(sf::Color::White);
+        table.setScale(1.6f, 1.6f);
+        sf::Vector2u texSize = table.getTexture()->getSize();
+        table.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
+        table.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 190);
+        worldRT.draw(table);
         worldRT.draw(card);
         worldRT.display();
 

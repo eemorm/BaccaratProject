@@ -7,10 +7,12 @@
 #include <iostream>
 #include <vector>
 
+sf::Texture tableTexture;
 sf::Texture theDealerBackgroundTexture;
 sf::Texture theDealerNumbersTexture;
 sf::Texture theDealerSuitsTexture;
 
+sf::Sprite table;
 sf::Sprite theDealerBackground;
 std::vector<sf::Sprite> theDealerNumbers;
 std::vector<sf::Sprite> theDealerSuits;
@@ -32,6 +34,8 @@ void loadTextures()
 {
     float bits = 32.0;
 
+    if (!tableTexture.loadFromFile("textures/Core/table.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerBackgroundTexture.loadFromFile("textures/Cards/TheDealer/TheDealerBackground.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerNumbersTexture.loadFromFile("textures/Cards/TheDealer/TheDealerNumbers.png")) 
@@ -39,6 +43,7 @@ void loadTextures()
     if (!theDealerSuitsTexture.loadFromFile("textures/Cards/TheDealer/TheDealerSuits.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
 
+    table.setTexture(tableTexture);
     theDealerBackground.setTexture(theDealerBackgroundTexture);
     splitTextures(&theDealerNumbersTexture, 9, &theDealerNumbers, bits);
     splitTextures(&theDealerSuitsTexture, 4, &theDealerSuits, bits);
