@@ -16,6 +16,8 @@ class Chip : public sf::Drawable, public IObjectAction
         bool isMoving = false;
         sf::Vector2f offset;
 
+        sf::Vector2f snapPosition;
+
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
         {
             target.draw(sprite);
@@ -24,11 +26,13 @@ class Chip : public sf::Drawable, public IObjectAction
         Chip(sf::Sprite s)
         {
             sprite = s;
+            snapPosition = sprite.getPosition();
         }
-
-        void setPosition(sf::Vector2f pos) { sprite.setPosition(pos); }
+        void setPosition(sf::Vector2f p) { sprite.setPosition(p); }
         sf::Vector2f getPosition() { return sprite.getPosition(); }
-
+        void setSnapPosition(sf::Vector2f p) { snapPosition = p; }
+        sf::Vector2f getOffset() { return offset; }
+        void setOffset(sf::Vector2f o) { offset = o; }
         bool isMouseOver(float x, float y) override
         {
             return sprite.getGlobalBounds().contains(x, y);

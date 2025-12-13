@@ -1,7 +1,9 @@
 // Custom Includes
 #include "textures.hpp"
+#include "Classes/Player.hpp"
 #include "Classes/Card.hpp"
 #include "Classes/Chip.hpp"
+#include "Classes/ChipStack.hpp"
 #include "Classes/Interfaces/IObjectAction.hpp"
 #include "Classes/LightSystem.hpp"
 
@@ -23,12 +25,13 @@ const int SCREEN_HEIGHT = 768;
 int main() // main function, where the flow of the game starts
 {
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "BaccaratProject", sf::Style::Close); // declare window
-    LightSystem lighting(SCREEN_WIDTH, SCREEN_HEIGHT);
-
     window.setFramerateLimit(60); // set fps limit to avoid too much GPU stress
+
+    LightSystem lighting(SCREEN_WIDTH, SCREEN_HEIGHT); // declare LightSystem
 
     loadTextures(); // load game textures
 
+    // ---DECLARE AND LOAD SHADERS AND RENDER TEXTURES---
     sf::Shader ditherShader;
     if (!ditherShader.loadFromFile("shaders/dither.frag", sf::Shader::Fragment))
     {
@@ -51,6 +54,9 @@ int main() // main function, where the flow of the game starts
     sf::Sprite lightingSprite(lightingRT.getTexture());
     sf::Sprite worldSprite(worldRT.getTexture());
 
+    Player player; // create player class
+
+    // ---DECLARE OBJECTS FOR TESTING---
     Card card(theDealerBackground, 
         theDealerNumbers[0], 
         theDealerSuits[0], 
@@ -61,7 +67,7 @@ int main() // main function, where the flow of the game starts
         sf::Color::White);
     Chip chip(theDealerBackground);
 
-    std::vector<IObjectAction*> clickables;
+    std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
 
     card.setPosition({700, 400});
     chip.setPosition({500, 300});
@@ -82,6 +88,13 @@ int main() // main function, where the flow of the game starts
 
     lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White));
 
+    ChipStack bankStack({181, 625});
+
+    for (int i = 0; i < 10; ++i)
+    {
+        bankStack.addChip(theDealerBackground);
+    }
+
     while (window.isOpen()) // loop when the window is open
     {
         sf::Event event; // declare an event for when an event happens
@@ -95,16 +108,43 @@ int main() // main function, where the flow of the game starts
                 for (auto* object : clickables)
                     if (object->isMouseOver(mousePos.x, mousePos.y))
                         object->onMoveStart(mousePos);
+                int index = bankStack.getClickedChipIndex(mousePos);
+                if (index != -1 && player.getHeldChips().size() == 0)
+                {
+                    auto taken = bankStack.takeChips(index);
+                    player.setHeldChips(std::move(taken));
+
+                    auto& held = player.getHeldChips();
+                    for (int i = 0; i < held.size(); ++i)
+                    {
+                        int j = held.size() - 1 - i;
+                        sf::Vector2f chipOffset = held[j]->getPosition() - mousePos;
+                        held[j]->setOffset(chipOffset);
+                    }
+                }
             }
             if (event.type == sf::Event::MouseMoved)
             {
                 for (auto* object : clickables)
                     object->onMove(mousePos);
+                if (!player.getHeldChips().empty())
+                {
+                    auto& held = player.getHeldChips();
+                    for (auto& chip : held)
+                    {
+                        chip->setPosition(mousePos + chip->getOffset());
+                    }
+                }
             }
             if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
             {
                 for (auto* object : clickables)
                     object->onMoveEnd(mousePos);
+                if (player.getHeldChips().size() > 0)
+                {
+                    bankStack.returnChips(player.getHeldChips());
+                    player.clearHeldChips();
+                }
             }
             if (event.type == sf::Event::Closed) // check if window close pressed
             {
@@ -133,6 +173,12 @@ int main() // main function, where the flow of the game starts
         worldRT.draw(table);
         worldRT.draw(card);
         worldRT.draw(chip);
+        worldRT.draw(bankStack);
+        auto& held = player.getHeldChips();
+        for (int i = held.size() - 1; i >= 0; --i)
+        {
+            worldRT.draw(*held[i]);
+        }
 
         worldRT.display();
 

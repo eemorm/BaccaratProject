@@ -7,17 +7,19 @@
 #include <iostream>
 #include <vector>
 
+// ---TEXTURES FOR SPRITES---
 sf::Texture tableTexture;
 sf::Texture theDealerBackgroundTexture;
 sf::Texture theDealerNumbersTexture;
 sf::Texture theDealerSuitsTexture;
 
+// ---SPRITES---
 sf::Sprite table;
 sf::Sprite theDealerBackground;
 std::vector<sf::Sprite> theDealerNumbers;
 std::vector<sf::Sprite> theDealerSuits;
 
-void splitTextures(sf::Texture* texture, int sections, std::vector<sf::Sprite>* destination, float size)
+void splitTextures(sf::Texture* texture, int sections, std::vector<sf::Sprite>* destination, float size) // splits textures that are in sections
 {
     for (int i = 0; i < sections; i++)
     {
@@ -30,10 +32,11 @@ void splitTextures(sf::Texture* texture, int sections, std::vector<sf::Sprite>* 
     }
 }
 
-void loadTextures()
+void loadTextures() // loads textures, used at start of game, puts textures into referenceble sprites
 {
     float bits = 32.0;
 
+    // ---LOAD TEXTURES---
     if (!tableTexture.loadFromFile("textures/Core/table.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerBackgroundTexture.loadFromFile("textures/Cards/TheDealer/TheDealerBackground.png")) 
@@ -43,6 +46,7 @@ void loadTextures()
     if (!theDealerSuitsTexture.loadFromFile("textures/Cards/TheDealer/TheDealerSuits.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
 
+    // ---SET TEXTURES INTO SPRITES---
     table.setTexture(tableTexture);
     theDealerBackground.setTexture(theDealerBackgroundTexture);
     splitTextures(&theDealerNumbersTexture, 9, &theDealerNumbers, bits);
