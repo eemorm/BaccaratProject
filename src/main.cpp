@@ -1,8 +1,7 @@
 // Custom Includes
 #include "textures.hpp"
-#include "Classes/Player.hpp"
+#include "Architecture/Game.hpp"
 #include "Classes/Card.hpp"
-#include "Classes/Chip.hpp"
 #include "Classes/ChipStack.hpp"
 #include "Classes/Interfaces/IObjectAction.hpp"
 #include "Classes/LightSystem.hpp"
@@ -54,8 +53,6 @@ int main() // main function, where the flow of the game starts
     sf::Sprite lightingSprite(lightingRT.getTexture());
     sf::Sprite worldSprite(worldRT.getTexture());
 
-    Player player; // create player class
-
     // ---DECLARE OBJECTS FOR TESTING---
     Card card(theDealerBackground, 
         theDealerNumbers[0], 
@@ -65,14 +62,11 @@ int main() // main function, where the flow of the game starts
         sf::Color::White, 
         sf::Color::White, 
         sf::Color::White);
-    Chip chip(theDealerBackground);
 
     std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
 
     card.setPosition({700, 400});
-    chip.setPosition({500, 300});
     clickables.push_back(&card);
-    clickables.push_back(&chip);
 
     sf::Vector2f mousePos;
 
@@ -94,6 +88,7 @@ int main() // main function, where the flow of the game starts
     {
         bankStack.addChip(theDealerBackground);
     }
+    clickables.push_back(&bankStack);
 
     while (window.isOpen()) // loop when the window is open
     {
@@ -108,43 +103,16 @@ int main() // main function, where the flow of the game starts
                 for (auto* object : clickables)
                     if (object->isMouseOver(mousePos.x, mousePos.y))
                         object->onMoveStart(mousePos);
-                int index = bankStack.getClickedChipIndex(mousePos);
-                if (index != -1 && player.getHeldChips().size() == 0)
-                {
-                    auto taken = bankStack.takeChips(index);
-                    player.setHeldChips(std::move(taken));
-
-                    auto& held = player.getHeldChips();
-                    for (int i = 0; i < held.size(); ++i)
-                    {
-                        int j = held.size() - 1 - i;
-                        sf::Vector2f chipOffset = held[j]->getPosition() - mousePos;
-                        held[j]->setOffset(chipOffset);
-                    }
-                }
             }
             if (event.type == sf::Event::MouseMoved)
             {
                 for (auto* object : clickables)
                     object->onMove(mousePos);
-                if (!player.getHeldChips().empty())
-                {
-                    auto& held = player.getHeldChips();
-                    for (auto& chip : held)
-                    {
-                        chip->setPosition(mousePos + chip->getOffset());
-                    }
-                }
             }
             if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
             {
                 for (auto* object : clickables)
                     object->onMoveEnd(mousePos);
-                if (player.getHeldChips().size() > 0)
-                {
-                    bankStack.returnChips(player.getHeldChips());
-                    player.clearHeldChips();
-                }
             }
             if (event.type == sf::Event::Closed) // check if window close pressed
             {
@@ -172,13 +140,7 @@ int main() // main function, where the flow of the game starts
 
         worldRT.draw(table);
         worldRT.draw(card);
-        worldRT.draw(chip);
         worldRT.draw(bankStack);
-        auto& held = player.getHeldChips();
-        for (int i = held.size() - 1; i >= 0; --i)
-        {
-            worldRT.draw(*held[i]);
-        }
 
         worldRT.display();
 
