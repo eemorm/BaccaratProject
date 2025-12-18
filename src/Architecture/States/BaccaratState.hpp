@@ -1,18 +1,28 @@
-#pragma once
+// Custom Includes
+#include "../../textures.hpp"
+#include "../GameState.hpp"
+#include "../../Classes/Card.hpp"
+#include "../../Classes/ChipStack.hpp"
+#include "../../Classes/Interfaces/IObjectAction.hpp"
+#include "../../Classes/LightSystem.hpp"
 
 // SFML
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
 
-// Custom Includes
-#include "../GameState.hpp"
+// Standard Libraries
+#include <iostream>
+#include <vector>
 
 class BaccaratState : public GameState
 {
     private:
         sf::RenderWindow& window;
 
-        //ChipStack bankStack;
-        //HeldChips held;   (we add next)
+        
 
     public:
         BaccaratState(sf::RenderWindow& w) : window(w) {}

@@ -17,6 +17,9 @@ class ChipStack : public sf::Drawable, public IObjectAction
         {
             sf::Sprite sprite;
             sf::Vector2f offset;
+            sf::Vector2f targetPosition;
+            int originalIndex = -1;
+            bool returning = false;
         };
         //struct HeldChips
         //{
@@ -32,6 +35,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
         float verticalOffset = 16.f;
         bool isDragging = false;
         bool bettingEnabled = true;
+        int grabbedIndex = -1;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {
@@ -80,6 +84,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
 
             for (int i = chips.size() - 1; i >= index; --i)
             {
+                chips[i].originalIndex = i;
                 taken.push_back(chips.back());
                 chips.pop_back();
             }
@@ -120,6 +125,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
             if (index == -1) return;
 
             isDragging = true;
+            grabbedIndex = index;
 
             heldChips = takeChips(index);
 
@@ -141,16 +147,52 @@ class ChipStack : public sf::Drawable, public IObjectAction
         void onMoveEnd(sf::Vector2f mousePos) override
         {
             if (!isDragging) return;
-
             isDragging = false;
 
             for (int i = 0; i < heldChips.size(); ++i)
             {
-                chips.push_back(heldChips[i]);
+                int orig = heldChips[i].originalIndex;
+                sf::Vector2f target = position;
+                target.y -= orig * verticalOffset;
+                heldChips[i].targetPosition = target;
             }
 
-            updateStackPositions();
+            grabbedIndex = -1;
+        }
+        void update(float dt) // dt = delta time in seconds
+        {
+            // Only lerp if not dragging
+            if (!isDragging && !heldChips.empty())
+            {
+                float lerpSpeed = 10.f; // Adjust for smoothness
 
-            heldChips.clear();
+                for (int i = 0; i < chips.size(); ++i)
+                {
+                    sf::Vector2f current = heldChips[i].sprite.getPosition();
+                    sf::Vector2f target = heldChips[i].targetPosition;
+
+                    // Simple lerp: newPos = current + (target - current) * alpha
+                    sf::Vector2f newPos = current + (target - current) * lerpSpeed * dt;
+                    heldChips[i].sprite.setPosition(newPos);
+                }
+
+                // Check if all chips are close enough to target to finalize
+                bool allAtTarget = true;
+                for (auto& chip : heldChips)
+                {
+                    if (std::abs(chip.sprite.getPosition().y - chip.targetPosition.y) > 0.5f)
+                        allAtTarget = false;
+                }
+
+                if (allAtTarget)
+                {
+                    // Push back in **original order** (not reversed)
+                    for (auto& chip : heldChips)
+                        chips.push_back(chip);
+
+                    heldChips.clear();
+                    updateStackPositions();
+                }
+            }
         }
 };

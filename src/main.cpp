@@ -26,6 +26,10 @@ int main() // main function, where the flow of the game starts
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "BaccaratProject", sf::Style::Close); // declare window
     window.setFramerateLimit(60); // set fps limit to avoid too much GPU stress
 
+    sf::Clock clock;
+    //Game game(window);
+    //game.run();
+
     LightSystem lighting(SCREEN_WIDTH, SCREEN_HEIGHT); // declare LightSystem
 
     loadTextures(); // load game textures
@@ -94,6 +98,9 @@ int main() // main function, where the flow of the game starts
     {
         sf::Event event; // declare an event for when an event happens
         
+        float dt = clock.restart().asSeconds();
+        bankStack.update(dt);
+
         while (window.pollEvent(event)) // check if window events pressed, i.e. close window
         {
             mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
