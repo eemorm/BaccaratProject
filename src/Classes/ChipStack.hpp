@@ -177,7 +177,6 @@ class ChipStack : public sf::Drawable, public IObjectAction
                 }
 
                 if (allAtTarget)
-                if (allAtTarget)
                 {
                     for (auto& chip : heldChips)
                         chips.push_back(chip);
