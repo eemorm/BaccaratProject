@@ -41,8 +41,9 @@ class ChipStack : public sf::Drawable, public IObjectAction
         {
             for (const auto& chip : chips)
                 target.draw(chip.sprite);
-            for (int i = heldChips.size() - 1; i >= 0; --i)
-                target.draw(heldChips[i].sprite);
+
+            for (const auto& chip : heldChips)
+                target.draw(chip.sprite);
         }
     public:
         ChipStack(sf::Vector2f pos)
@@ -79,17 +80,12 @@ class ChipStack : public sf::Drawable, public IObjectAction
         {
             std::vector<Chip> taken;
 
-            if (index < 0 || index >= chips.size())
-                return taken;
+            for (int i = index; i < chips.size(); ++i)
+                taken.push_back(chips[i]);
 
-            for (int i = chips.size() - 1; i >= index; --i)
-            {
-                chips[i].originalIndex = i;
-                taken.push_back(chips.back());
-                chips.pop_back();
-            }
-
+            chips.erase(chips.begin() + index, chips.end());
             updateStackPositions();
+
             return taken;
         }
         void returnChips(std::vector<Chip>& returned)
@@ -149,34 +145,30 @@ class ChipStack : public sf::Drawable, public IObjectAction
             if (!isDragging) return;
             isDragging = false;
 
+            int baseIndex = chips.size();
+
             for (int i = 0; i < heldChips.size(); ++i)
             {
-                int orig = heldChips[i].originalIndex;
                 sf::Vector2f target = position;
-                target.y -= orig * verticalOffset;
+                target.y -= (baseIndex + i) * verticalOffset;
                 heldChips[i].targetPosition = target;
             }
-
-            grabbedIndex = -1;
         }
-        void update(float dt) // dt = delta time in seconds
+        void update(float dt)
         {
-            // Only lerp if not dragging
             if (!isDragging && !heldChips.empty())
             {
-                float lerpSpeed = 10.f; // Adjust for smoothness
+                float lerpSpeed = 10.f;
 
-                for (int i = 0; i < chips.size(); ++i)
+                for (int i = 0; i < heldChips.size(); ++i)
                 {
                     sf::Vector2f current = heldChips[i].sprite.getPosition();
                     sf::Vector2f target = heldChips[i].targetPosition;
 
-                    // Simple lerp: newPos = current + (target - current) * alpha
                     sf::Vector2f newPos = current + (target - current) * lerpSpeed * dt;
                     heldChips[i].sprite.setPosition(newPos);
                 }
 
-                // Check if all chips are close enough to target to finalize
                 bool allAtTarget = true;
                 for (auto& chip : heldChips)
                 {
@@ -185,8 +177,8 @@ class ChipStack : public sf::Drawable, public IObjectAction
                 }
 
                 if (allAtTarget)
+                if (allAtTarget)
                 {
-                    // Push back in **original order** (not reversed)
                     for (auto& chip : heldChips)
                         chips.push_back(chip);
 
