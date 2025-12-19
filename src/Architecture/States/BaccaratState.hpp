@@ -1,5 +1,6 @@
+#pragma once
+
 // Custom Includes
-#include "../../textures.hpp"
 #include "../GameState.hpp"
 #include "../../Classes/Card.hpp"
 #include "../../Classes/ChipStack.hpp"
@@ -22,10 +23,23 @@ class BaccaratState : public GameState
     private:
         sf::RenderWindow& window;
 
-        
+        LightSystem lighting; // declare LightSystem
+        sf::RenderTexture lightingRT;
+        sf::RenderTexture worldRT;
+        sf::RenderTexture ditherRT;
+
+        std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
+
+        // ---DECLARE OBJECTS FOR TESTING---
+        Card card;
+        ChipStack bankStack;
+        sf::Sprite table;
+
+        sf::Vector2f mousePos;
+        sf::Text cursorText;
 
     public:
-        BaccaratState(sf::RenderWindow& w) : window(w) {}
+        BaccaratState(sf::RenderWindow& w);
 
         void handleEvent(sf::Event& event) override;
         void update(float dt) override;

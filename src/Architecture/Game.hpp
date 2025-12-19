@@ -25,8 +25,10 @@ class Game
                 sf::Event event;
                 while (window.pollEvent(event))
                 {
-                    if (event.type == sf::Event::Closed)
-                        window.close();
+                    if (event.type == sf::Event::Closed) // check if window close pressed
+                    {
+                        window.close(); // close window
+                    }   
 
                     states.handleEvent(event);
                 }

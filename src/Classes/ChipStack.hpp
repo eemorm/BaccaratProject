@@ -117,6 +117,8 @@ class ChipStack : public sf::Drawable, public IObjectAction
         }
         void onMoveStart(sf::Vector2f mousePos) override
         {
+            if (isDragging) return;
+
             int index = getClickedChipIndex(mousePos);
             if (index == -1) return;
 
