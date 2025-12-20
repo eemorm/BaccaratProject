@@ -3,6 +3,7 @@
 // Custom Includes
 #include "../GameState.hpp"
 #include "../../Classes/Card.hpp"
+#include "../../Classes/Deck.hpp"
 #include "../../Classes/ChipStack.hpp"
 #include "../../Classes/Interfaces/IObjectAction.hpp"
 #include "../../Classes/LightSystem.hpp"
@@ -32,6 +33,8 @@ class BaccaratState : public GameState
 
         // ---DECLARE OBJECTS FOR TESTING---
         Card card;
+        Card c;
+        Deck deck;
         ChipStack bankStack;
         sf::Sprite table;
 

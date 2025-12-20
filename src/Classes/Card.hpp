@@ -34,6 +34,8 @@ class Card : public sf::Drawable, public IObjectAction
         float moveRotation = 0.0f;
         sf::Vector2f prevMousePos;
 
+        int value;
+
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
         {
             states.transform *= transform.getTransform();
@@ -57,7 +59,8 @@ class Card : public sf::Drawable, public IObjectAction
             sf::Color bgc, 
             sf::Color nmc, 
             sf::Color stc, 
-            sf::Color bsc) 
+            sf::Color bsc,
+            int v) 
         {
             background = bg;
             number = nm;
@@ -67,6 +70,7 @@ class Card : public sf::Drawable, public IObjectAction
             numberColor = nmc;
             suitColor = stc;
             backsideColor = bsc;
+            value = v;
 
             background.setColor(backgroundColor);
             number.setColor(numberColor);

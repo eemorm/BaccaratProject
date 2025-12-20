@@ -3,6 +3,7 @@
 #include "../../textures.hpp"
 #include "../GameState.hpp"
 #include "../../Classes/Card.hpp"
+#include "../../Classes/Deck.hpp"
 #include "../../Classes/ChipStack.hpp"
 #include "../../Classes/Interfaces/IObjectAction.hpp"
 #include "../../Classes/LightSystem.hpp"
@@ -28,7 +29,18 @@ BaccaratState::BaccaratState(sf::RenderWindow& w) :
     sf::Color::White,
     sf::Color::White,
     sf::Color::White,
-    sf::Color::White),
+    sf::Color::White,
+    1),
+    c(theDealerBackground,
+    theDealerNumbers[0],
+    theDealerSuits[0],
+    theDealerBackground,
+    sf::Color::White,
+    sf::Color::White,
+    sf::Color::White,
+    sf::Color::White,
+    1),
+    deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
     bankStack({181.f, 625.f})
 { 
     lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -38,6 +50,10 @@ BaccaratState::BaccaratState(sf::RenderWindow& w) :
     lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White));
 
     card.setPosition({700, 400});
+    deck.setPosition({1100, 600});
+    deck.shuffleDeck();
+    c = deck.drawCardFromDeck();
+    c.setPosition({deck.getPosition().x, deck.getPosition().y});
     clickables.push_back(&card);
     for (int i = 0; i < 10; ++i)
     {
@@ -113,6 +129,8 @@ void BaccaratState::draw(sf::RenderWindow& window)
     // ---RENDER WORLD---
     worldRT.draw(table);
     worldRT.draw(card);
+    worldRT.draw(deck);
+    worldRT.draw(c);
     worldRT.draw(bankStack);
 
     worldRT.display();
