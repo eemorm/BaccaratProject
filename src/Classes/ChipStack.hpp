@@ -21,20 +21,13 @@ class ChipStack : public sf::Drawable, public IObjectAction
             int originalIndex = -1;
             bool returning = false;
         };
-        //struct HeldChips
-        //{
-        //    std::vector<Chip> chips;
-        //    std::vector<sf::Vector2f> targets;
-        //    bool snap = false;
-        //};
+
         std::vector<Chip> chips;
         std::vector<Chip> heldChips;
-        //HeldChips held;
 
         sf::Vector2f position;
         float verticalOffset = 16.f;
         bool isDragging = false;
-        bool bettingEnabled = true;
         int grabbedIndex = -1;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -56,8 +49,6 @@ class ChipStack : public sf::Drawable, public IObjectAction
         void setPosition(sf::Vector2f p) { position = p; }  
         float getVerticalOffset() { return verticalOffset; }
         void setVerticalOffset(float vo) { verticalOffset = vo; }
-        bool getBettingEnabled() { return bettingEnabled; }
-        void setBettingEnabled(bool be) { bettingEnabled = be; if (!be) { updateStackPositions(); } }
         sf::Vector2f computePosition(int index) { return { position.x, position.y - index * verticalOffset }; }
         void updateStackPositions()
         {

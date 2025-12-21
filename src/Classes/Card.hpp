@@ -52,6 +52,7 @@ class Card : public sf::Drawable, public IObjectAction
             }
         }
     public:
+        Card() {}
         Card(sf::Sprite bg, 
             sf::Sprite nm, 
             sf::Sprite st, 
@@ -94,6 +95,7 @@ class Card : public sf::Drawable, public IObjectAction
         void setPosition(sf::Vector2f pos) { transform.setPosition(pos); position = pos; }
         void setRotation(float rot) { transform.setRotation(rot); rotation = rot; }
         void setScale(float scl) { transform.setScale({scl, scl}); scale = scl; }
+        int getValue() { return value; }
         void flip() { show = !show; }
         bool isMouseOver(float mx, float my) override
         {

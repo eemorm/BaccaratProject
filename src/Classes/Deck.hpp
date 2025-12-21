@@ -49,7 +49,7 @@ class Deck : public sf::Drawable
                     sf::Color::White,
                     sf::Color::White,
                     sf::Color::White,
-                    j);
+                    j + 1);
                     deck.push_back(card);
                 }
             }
