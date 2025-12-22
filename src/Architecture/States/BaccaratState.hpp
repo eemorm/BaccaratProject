@@ -7,6 +7,7 @@
 #include "../../Classes/Card.hpp"
 #include "../../Classes/Deck.hpp"
 #include "../../Classes/ChipStack.hpp"
+#include "../../Classes/WealthManager.hpp"
 #include "../../Classes/Interfaces/IObjectAction.hpp"
 #include "../../Classes/Baccarat/BaccaratGame.hpp"
 #include "../../Classes/Baccarat/BaccaratBet.hpp"
@@ -48,21 +49,25 @@ class BaccaratState : public GameState
         // NOTE: order of these declarations matters for initialization order
         Deck deck; // deck object, which is literally a virtual representation of a deck of cards. its just that simple
         BaccaratGame game; // baccarat game object, which manages and ties the game logic of baccarat together
-        ChipStack bankStack; // chip stack for betting
+        ChipStack* chosenStack = nullptr;
         sf::Sprite table; // table sprite
         //-------------------
         std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
 
-        //---BETTING---
+        //---BETTING AND WEALTH---
+        WealthManager chipWealthManager; // wealth manager to manage player's wealth
+        ChipStack stack100;
+        ChipStack stack50;
+        ChipStack stack10;
+        ChipStack stack1;
         sf::FloatRect bankerBetZone; // betting zone for banker
         sf::FloatRect tieBetZone; // betting zone for tie
         sf::FloatRect playerBetZone; // betting zone for player
-        int chipWealth = 0;
+        bool roundOver = false; // flag to check if round is over, used to trigger payout only once
     
         //---MISC---
         sf::Vector2f mousePos; // mouse position
-        bool roundOver = false;
-        sf::Text cursorText; // text to display cursor position for debugging; always updates
+        sf::Text cursorText;
         sf::Text moneyText;
         sf::Text phaseText;
         sf::Text winText;
@@ -73,8 +78,11 @@ class BaccaratState : public GameState
             window(w),
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
-            game(deck),
-            bankStack({181.f, 625.f}, 10)
+            game(deck),,
+            stack100({55, 639}, 100),
+            stack50({155, 639}, 50),
+            stack10({255, 639}, 10),
+            stack1({355, 639}, 1)
         { 
             //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -91,7 +99,10 @@ class BaccaratState : public GameState
             {
                 bankStack.addChip(theDealerBackground);
             }
-            clickables.push_back(&bankStack);
+            clickables.push_back(&stack100);
+            clickables.push_back(&stack50);
+            clickables.push_back(&stack10);
+            clickables.push_back(&stack1);
             //---SET UP TABLE---
             table.setTexture(tableTexture);
             table.setScale(1.6f, 1.6f);
@@ -100,9 +111,16 @@ class BaccaratState : public GameState
             table.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 190);
 
             //---INITIALIZE BET ZONES---
-            bankerBetZone = { 499, 532, 602, 617 };
-            tieBetZone = { 617, 563, 776, 617 };
-            playerBetZone = { 762, 564, 915, 589 };
+            bankerBetZone = { 499.f, 532.f, 103.f, 85.f };
+            tieBetZone = { 617.f, 563.f, 159.f, 54.f };
+            playerBetZone = { 762.f, 564.f, 153.f, 25.f };
+
+            //---SET UP WEALTH MANAGER---
+            chipWealthManager.addStack(&stack1, 1);
+            chipWealthManager.addStack(&stack10, 10);
+            chipWealthManager.addStack(&stack50, 50);
+            chipWealthManager.addStack(&stack100, 100);
+            chipWealthManager.setWealth(385);
 
             //---SET UP CURSOR TEXT---
             cursorText.setFont(font);
@@ -144,7 +162,10 @@ class BaccaratState : public GameState
             {
                 for (auto* object : clickables) // for object (pointer to item with IObjectAction) in clickables
                     if (object->isMouseOver(mousePos.x, mousePos.y))
+                    {
                         object->onMoveStart(mousePos); // start moving object
+                        chosenStack = dynamic_cast<ChipStack*>(object);
+                    }
             }
             if (event.type == sf::Event::MouseMoved) // if mouse moved
             {
@@ -160,7 +181,9 @@ class BaccaratState : public GameState
                     return;
                 }
 
-                int chipsInHand = bankStack.getHeldChips().size(); // get number of chips in hand
+                if (!chosenStack) return;
+            
+                int chipsInHand = chosenStack->getHeldChips().size(); // get number of chips in hand
                 if (chipsInHand == 0) return; // failsafe check for if no chips are being held
     
                 BetTarget target = BetTarget::None; // initialize bet target to check for bet zone and mouse interaction with bets
@@ -176,22 +199,25 @@ class BaccaratState : public GameState
                 // if a bet target was selected, place the bet with the correct amount and close betting phase
                 if (target != BetTarget::None)
                 {
-                    int amount = chipsInHand * bankStack.getChipValue(); // calculate bet amount based on number of chips and chip value
+                    int amount = chipsInHand * chosenStack->getChipValue(); // calculate bet amount based on number of chips and chip value
                     game.placeBet(target, amount); // place the bet
-
-                    bankStack.acceptBet(); // transfer chips by having bank stack accept the bet
+                    chosenStack->acceptBet(); // transfer chips by having bank stack accept the bet
+                    chipWealthManager.addWealth(-amount); // deduct bet amount from player's wealth
                     game.closeBetting(); // finish the betting phase with a call to BaccaratGame
                 }
 
                 // final failsafe for if betting phase is going on, but no bet target was selected
                 for (auto* object : clickables)
                     object->onMoveEnd(mousePos);
+
+                chosenStack = nullptr;
             }   
         }
         // updates every frame with respect to delta time
         inline void update(float dt) override
         {
-            bankStack.update(dt); // update the bank stack for lerping chips back if they are released with respect to the rules in handleEvent and delta time
+            for (auto* object : chipWealthManager.getStacks())
+                object->update(dt); // update wealth manager to update chip stacks
             game.update(dt); // update the baccarat game logic with respect to delta time
 
             //---UPDATE LIGHTING---
@@ -213,7 +239,7 @@ class BaccaratState : public GameState
                 {
                     roundOver = true;
                     int winnings = game.payout();
-                    chipWealth += winnings;
+                    chipWealthManager.addWealth(winnings);
                     payoutText.setString("Payout: $" + std::to_string(winnings));
                 }
             }
@@ -227,7 +253,7 @@ class BaccaratState : public GameState
 
             moneyText.setString(
             "Bet: $" + std::to_string(game.getBetAmount()) + 
-            "\nWealth: $" + std::to_string(chipWealth)
+            "\nWealth: $" + std::to_string(chipWealthManager.getWealth())
             );
 
             phaseText.setString(game.phaseToString(game.getPhase()));
@@ -269,7 +295,7 @@ class BaccaratState : public GameState
                 worldRT.draw(c);
             }
 
-            worldRT.draw(bankStack); // draw bank stack on top of everything else to ensure visibility over other stuff when dragging
+            worldRT.draw(chipWealthManager); // draw all chip stacks managed by wealth manager on top of everything else
 
             worldRT.display(); // display worldRT (but not drawn to window yet)
 
