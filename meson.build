@@ -6,7 +6,7 @@ project('BaccaratProject', 'cpp',
 sfml_graphics = dependency('sfml-graphics')
 sfml_network  = dependency('sfml-network')
 
-files = ['src/main.cpp', 'src/textures.cpp']
+files = ['src/main.cpp']
 
 executable('BaccaratProject', files,
   dependencies : [sfml_graphics, sfml_network]

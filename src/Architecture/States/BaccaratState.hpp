@@ -191,7 +191,7 @@ class BaccaratState : public GameState
                 worldRT.draw(c);
             }
 
-            startPos = { 595, 463 };
+            startPos = { 595, 470 };
             for (int i = 0; i < game.getBankerHand().getCards().size(); i++) 
             {
                 Card& c = game.getBankerHand().getCards()[i];
