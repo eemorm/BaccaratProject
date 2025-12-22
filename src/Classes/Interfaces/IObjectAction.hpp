@@ -9,7 +9,6 @@
     Defines an object as actionable, and contains methods for executing actions.
     Used to manage object clicking and movement in a modular way.
     Used by having a class inherit from IObjectAction.
-
 */
 class IObjectAction
 {

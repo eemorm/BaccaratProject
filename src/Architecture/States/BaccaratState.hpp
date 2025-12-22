@@ -23,11 +23,19 @@
 #include <iostream>
 #include <vector>
 
+/*
+    class BaccaratState 
+
+    Runs from the GameStateManager, which is run from main.cpp.
+    Manages all aspects of the baccarat game, including rendering, updating, and event handling.
+    Used to separate game logic from main application flow for better organization.
+    Runs during the baccarat game only, and is switched by the GameStateManager.
+*/
 class BaccaratState : public GameState
 {
     private:
         //---WINDOW---
-        sf::RenderWindow& window; // window; comes from main.cpp
+        sf::RenderWindow& window; // window; comes from Game class which comes from main.cpp; passed by reference for rendering
 
         //---LIGHTING---
         LightSystem lighting; // light system to manage the lighting
