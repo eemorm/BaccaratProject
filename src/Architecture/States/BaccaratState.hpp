@@ -9,6 +9,7 @@
 #include "../../Classes/ChipStack.hpp"
 #include "../../Classes/Interfaces/IObjectAction.hpp"
 #include "../../Classes/Baccarat/BaccaratGame.hpp"
+#include "../../Classes/Baccarat/BaccaratBet.hpp"
 #include "../../Classes/LightSystem.hpp"
 
 // SFML
@@ -42,10 +43,13 @@ class BaccaratState : public GameState
         //-------------------
         std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
 
-        //---GAME VARIABLES---
+        //---BETTING---
         bool bettingEnabled;
         int currentBet;
-
+        sf::FloatRect bankerBetZone;
+        sf::FloatRect tieBetZone;
+        sf::FloatRect playerBetZone;
+    
         //---MISC---
         sf::Vector2f mousePos;
         sf::Text cursorText;
@@ -74,6 +78,9 @@ class BaccaratState : public GameState
             clickables.push_back(&bankStack);
             table.setTexture(tableTexture);
 
+            bankerBetZone = { 499, 532, 602, 617 };
+            tieBetZone = { 617, 563, 776, 617 };
+            playerBetZone = { 762, 564, 915, 589 };
             bettingEnabled = true;
             currentBet = 0;
 
@@ -99,6 +106,34 @@ class BaccaratState : public GameState
             }
             if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
             {
+                if (!game.isBettingOpen())
+                {
+                    for (auto* object : clickables)
+                        object->onMoveEnd(mousePos);
+                    return;
+                }
+
+                int chipsDropped = bankStack.getHeldChips().size();
+                if (chipsDropped == 0) return;
+    
+                BetTarget target = BetTarget::None;
+    
+                if (playerBetZone.contains(mousePos))
+                    target = BetTarget::Player;
+                else if (bankerBetZone.contains(mousePos))
+                    target = BetTarget::Banker;
+                else if (tieBetZone.contains(mousePos))
+                    target = BetTarget::Tie;
+    
+                if (target != BetTarget::None)
+                {
+                    int amount = chipsDropped * bankStack.getChipValue();
+                    game.placeBet(target, amount);
+
+                    bankStack.acceptBet();
+                    game.closeBetting();
+                }
+
                 for (auto* object : clickables)
                     object->onMoveEnd(mousePos);
             }   
@@ -145,7 +180,6 @@ class BaccaratState : public GameState
             // ---RENDER WORLD---
             worldRT.draw(table);
             worldRT.draw(deck);
-            worldRT.draw(bankStack);
 
             sf::Vector2f startPos = { 595, 692 };
             float spacing = 100.f;
@@ -164,6 +198,8 @@ class BaccaratState : public GameState
                 c.setPosition(startPos + sf::Vector2f(i * spacing, 0));
                 worldRT.draw(c);
             }
+
+            worldRT.draw(bankStack);
 
             worldRT.display();
 

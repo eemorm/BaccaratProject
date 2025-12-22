@@ -4,6 +4,7 @@
 #include "BaccaratHand.hpp"
 #include "BaccaratResult.hpp"
 #include "BaccaratRules.hpp"
+#include "BaccaratBet.hpp"
 #include "../Deck.hpp"
 
 // Standard Libraries
@@ -24,6 +25,11 @@ class BaccaratGame
             Resolve,
             Finished
         };
+        struct Bet
+        {
+            BetTarget target = BetTarget::None;
+            int amount = 0;
+        };
 
         BaccaratHand playerHand;
         BaccaratHand bankerHand;
@@ -31,6 +37,7 @@ class BaccaratGame
         BaccaratPhase phase = BaccaratPhase::Idle;
         float phaseTimer = 0.f;
         Deck& deck;
+        Bet currentBet;
     public:
         BaccaratGame(Deck& d) : deck(d) { rng = std::mt19937{ std::random_device{}() };}
         Card drawCard() { return deck.drawCardFromDeck(); }
@@ -38,9 +45,18 @@ class BaccaratGame
         {
             playerHand.clear();
             bankerHand.clear();
-            phase = BaccaratPhase::DealingInitial;
+            phase = BaccaratPhase::Betting;
             phaseTimer = 0.f;
         }
+        bool isBettingOpen() { return phase == BaccaratPhase::Betting; }
+        void placeBet(BetTarget target, int amount)
+        {
+            if (phase != BaccaratPhase::Betting) return;
+
+            currentBet.target = target;
+            currentBet.amount += amount;
+        }
+        void closeBetting() { phase = BaccaratPhase::DealingInitial; }
         void dealInitial()
         {
             if (phaseTimer < 0.5f) return;
@@ -71,13 +87,9 @@ class BaccaratGame
         }
         void bankerThirdCard()
         {
-            if (!doesBankerDrawAThirdCard(bankerHand, *playerHand.getThirdCard()))
-            {
-                phase = BaccaratPhase::Resolve;
-                return;
-            }
-
-            if (phaseTimer >= 0.5f)
+            if (playerHand.getThirdCard() == nullptr) { phase = BaccaratPhase::Resolve; return; } // check for if player did not draw a third card
+            if (!doesBankerDrawAThirdCard(bankerHand, *playerHand.getThirdCard())) { phase = BaccaratPhase::Resolve; return; } // check for if banker should not draw a third card
+            if (phaseTimer >= 0.5f) // if banker does draw a third card then draw the card and continue to resolve phase
             {
                 bankerHand.addCard(drawCard());
                 phase = BaccaratPhase::Resolve;

@@ -24,6 +24,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
 
         std::vector<Chip> chips;
         std::vector<Chip> heldChips;
+        int chipValue = 10;
 
         sf::Vector2f position;
         float verticalOffset = 16.f;
@@ -45,6 +46,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
         }
         std::vector<Chip>& getChips() { return chips; }
         std::vector<Chip>& getHeldChips() { return heldChips; }
+        int getChipValue() { return chipValue; }
         sf::Vector2f getPosition() { return position; }      
         void setPosition(sf::Vector2f p) { position = p; }  
         float getVerticalOffset() { return verticalOffset; }
@@ -98,6 +100,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
 
             return -1;
         }
+        void acceptBet() { heldChips.clear(); isDragging = false; }
         bool isMouseOver(float x, float y) override
         {
             for (auto i = 0; i < chips.size(); i++)
