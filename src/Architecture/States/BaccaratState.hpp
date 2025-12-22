@@ -27,97 +27,108 @@ class BaccaratState : public GameState
 {
     private:
         //---WINDOW---
-        sf::RenderWindow& window;
+        sf::RenderWindow& window; // window; comes from main.cpp
 
         //---LIGHTING---
-        LightSystem lighting;
-        sf::RenderTexture lightingRT;
-        sf::RenderTexture worldRT;
-        sf::RenderTexture ditherRT;
+        LightSystem lighting; // light system to manage the lighting
+        sf::RenderTexture lightingRT; // render texture for lighting pass
+        sf::RenderTexture worldRT; // render texture for world pass
+        sf::RenderTexture ditherRT; // render texture for the dither shader
 
         //---GAME OBJECTS---
-        Deck deck;
-        ChipStack bankStack;
-        BaccaratGame game;
-        sf::Sprite table;
+        // NOTE: order of these declarations matters for initialization order
+        Deck deck; // deck object, which is literally a virtual representation of a deck of cards. its just that simple
+        BaccaratGame game; // baccarat game object, which manages and ties the game logic of baccarat together
+        ChipStack bankStack; // chip stack for betting
+        sf::Sprite table; // table sprite
         //-------------------
         std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
 
         //---BETTING---
-        bool bettingEnabled;
-        int currentBet;
-        sf::FloatRect bankerBetZone;
-        sf::FloatRect tieBetZone;
-        sf::FloatRect playerBetZone;
+        sf::FloatRect bankerBetZone; // betting zone for banker
+        sf::FloatRect tieBetZone; // betting zone for tie
+        sf::FloatRect playerBetZone; // betting zone for player
     
         //---MISC---
-        sf::Vector2f mousePos;
-        sf::Text cursorText;
+        sf::Vector2f mousePos; // mouse position
+        sf::Text cursorText; // text to display cursor position for debugging; always updates
 
     public:
+        // constructor, initializes objects that don't have default constructors
         inline BaccaratState(sf::RenderWindow& w) : 
             window(w),
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
-            bankStack({181.f, 625.f}),
-            game(deck)
+            game(deck),
+            bankStack({181.f, 625.f})
         { 
+            //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
             worldRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
             ditherRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+            //---STATIC LIGHTS---
             lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White));
 
+            //---PREPARE GAME OBJECTS---
             deck.setPosition({1100, 600});
             deck.shuffleDeck();
-            game.startRound();
             for (int i = 0; i < 10; ++i)
             {
                 bankStack.addChip(theDealerBackground);
             }
             clickables.push_back(&bankStack);
+            //---SET UP TABLE---
             table.setTexture(tableTexture);
+            table.setScale(1.6f, 1.6f);
+            sf::Vector2u texSize = table.getTexture()->getSize();
+            table.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
+            table.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 190);
 
+            //---INITIALIZE BET ZONES---
             bankerBetZone = { 499, 532, 602, 617 };
             tieBetZone = { 617, 563, 776, 617 };
             playerBetZone = { 762, 564, 915, 589 };
-            bettingEnabled = true;
-            currentBet = 0;
 
+            //---SET UP CURSOR TEXT---
             cursorText.setFont(font);
             cursorText.setCharacterSize(24);
             cursorText.setFillColor(sf::Color::Blue);
+
+            game.startRound(); // start the round of baccarat
         }
 
+        // handles events such as mouse movement and clicks, passed from GameStateManager which is run from main.cpp
         inline void handleEvent(sf::Event& event) override
         {
-            mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window)); // get mouse position in world coordinates
 
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) // left mouse button down
             {
-                for (auto* object : clickables)
+                for (auto* object : clickables) // for object (pointer to item with IObjectAction) in clickables
                     if (object->isMouseOver(mousePos.x, mousePos.y))
-                        object->onMoveStart(mousePos);
+                        object->onMoveStart(mousePos); // start moving object
             }
-            if (event.type == sf::Event::MouseMoved)
+            if (event.type == sf::Event::MouseMoved) // if mouse moved
             {
                 for (auto* object : clickables)
-                    object->onMove(mousePos);
+                    object->onMove(mousePos); // update object position based on mouse movement
             }
-            if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
+            if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) // on left mouse button release
             {
-                if (!game.isBettingOpen())
+                if (!game.isBettingOpen()) // initial check for if betting is closed
                 {
                     for (auto* object : clickables)
-                        object->onMoveEnd(mousePos);
+                        object->onMoveEnd(mousePos); // end the movement of all clickables
                     return;
                 }
 
-                int chipsDropped = bankStack.getHeldChips().size();
-                if (chipsDropped == 0) return;
+                int chipsInHand = bankStack.getHeldChips().size(); // get number of chips in hand
+                if (chipsInHand == 0) return; // failsafe check for if no chips are being held
     
-                BetTarget target = BetTarget::None;
+                BetTarget target = BetTarget::None; // initialize bet target to check for bet zone and mouse interaction with bets
     
+                // check which bet zone the mouse is in
                 if (playerBetZone.contains(mousePos))
                     target = BetTarget::Player;
                 else if (bankerBetZone.contains(mousePos))
@@ -125,51 +136,52 @@ class BaccaratState : public GameState
                 else if (tieBetZone.contains(mousePos))
                     target = BetTarget::Tie;
     
+                // if a bet target was selected, place the bet with the correct amount and close betting phase
                 if (target != BetTarget::None)
                 {
-                    int amount = chipsDropped * bankStack.getChipValue();
-                    game.placeBet(target, amount);
+                    int amount = chipsInHand * bankStack.getChipValue(); // calculate bet amount based on number of chips and chip value
+                    game.placeBet(target, amount); // place the bet
 
-                    bankStack.acceptBet();
-                    game.closeBetting();
+                    bankStack.acceptBet(); // transfer chips by having bank stack accept the bet
+                    game.closeBetting(); // finish the betting phase with a call to BaccaratGame
                 }
 
+                // final failsafe for if betting phase is going on, but no bet target was selected
                 for (auto* object : clickables)
                     object->onMoveEnd(mousePos);
             }   
         }
+        // updates every frame with respect to delta time
         inline void update(float dt) override
         {
-            bankStack.update(dt);
-            game.update(dt);
+            bankStack.update(dt); // update the bank stack for lerping chips back if they are released with respect to the rules in handleEvent and delta time
+            game.update(dt); // update the baccarat game logic with respect to delta time
 
-            // ---UPDATE LIGHTING---
-            lighting.clearDynamicLights();
-            lighting.addDynamicLight(Light(mousePos, 250.f, 1.0f, sf::Color::White));
-            lighting.update();
+            //---UPDATE LIGHTING---
+            lighting.clearDynamicLights(); // clear moving lights from last frame to update
+            lighting.addDynamicLight(Light(mousePos, 250.f, 1.0f, sf::Color::White)); // add back dynamic lights in order to give the appearance of movement
+            lighting.update(); // draw lighting (but not to RT yet)
 
-            // ---RENDER LIGHTING PASS---
-            lightingRT.clear(sf::Color::Black);
-            lightingRT.draw(lighting);
-            lightingRT.display();
+            //---RENDER LIGHTING PASS---
+            lightingRT.clear(sf::Color::Black); // clear lighting RT to black so that holes can be cut to show lighting
+            lightingRT.draw(lighting); // draw lighting on RT
+            lightingRT.display(); // display lightingRT (but not drawn to window yet)
 
-            // ---RENDER WORLD PASS---
-            worldRT.clear(sf::Color::White);
+            //---RENDER WORLD PASS---
+            worldRT.clear(sf::Color::White); // clear worldRT to have white as a background
 
-            table.setScale(1.6f, 1.6f);
-            sf::Vector2u texSize = table.getTexture()->getSize();
-            table.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
-            table.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 190);
-
+            //---UPDATE CURSOR TEXT---
             cursorText.setString(
                 "X: " + std::to_string((int)mousePos.x) +
                 " Y: " + std::to_string((int)mousePos.y)
             );
             cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
         }
+        // draws everything to the screen
         inline void draw(sf::RenderWindow& window) override
         {
-            // ---SHADER UNIFORMS---
+            //---SHADER UNIFORMS---
+            // shader uniforms set; basically just settings to set the shader with the render texture and screen resolution
             ditherShader.setUniform("texture", lightingRT.getTexture());
             ditherShader.setUniform("resolution", sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 
@@ -177,48 +189,50 @@ class BaccaratState : public GameState
             pixelationShader.setUniform("resolution", sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
             pixelationShader.setUniform("pixelSize", 4.f);
 
-            // ---RENDER WORLD---
-            worldRT.draw(table);
-            worldRT.draw(deck);
+            //---RENDER WORLD---
+            worldRT.draw(table); // draw table at first z-layer
+            worldRT.draw(deck); // draw deck on top of table
 
-            sf::Vector2f startPos = { 595, 692 };
-            float spacing = 100.f;
+            // then draw player and banker hands
+            sf::Vector2f startPos = { 595, 692 }; // starting position for player hand
+            float spacing = 100.f; // spacing between cards
 
             for (int i = 0; i < game.getPlayerHand().getCards().size(); i++) 
             {
-                Card& c = game.getPlayerHand().getCards()[i];
-                c.setPosition(startPos + sf::Vector2f(i * spacing, 0));
-                worldRT.draw(c);
+                Card& c = game.getPlayerHand().getCards()[i]; // get each card in hand
+                c.setPosition(startPos + sf::Vector2f(i * spacing, 0)); // set position relative to starting position and spacing
+                worldRT.draw(c); // draw card to render texture
             }
 
-            startPos = { 595, 470 };
-            for (int i = 0; i < game.getBankerHand().getCards().size(); i++) 
+            startPos = { 595, 470 }; // starting position for banker hand
+            for (int i = 0; i < game.getBankerHand().getCards().size(); i++) // basically same loop as player hand but for banker
             {
                 Card& c = game.getBankerHand().getCards()[i];
                 c.setPosition(startPos + sf::Vector2f(i * spacing, 0));
                 worldRT.draw(c);
             }
 
-            worldRT.draw(bankStack);
+            worldRT.draw(bankStack); // draw bank stack on top of everything else to ensure visibility over other stuff when dragging
 
-            worldRT.display();
+            worldRT.display(); // display worldRT (but not drawn to window yet)
 
+            // set render textures to sprites for final composite onto the screen to draw frame
             sf::Sprite worldSprite(worldRT.getTexture());
             sf::Sprite lightingSprite(lightingRT.getTexture());
 
-            // ---RENDER DITHER---
-            ditherRT.clear(sf::Color::Transparent);
-            ditherRT.draw(lightingSprite, &ditherShader);
-            ditherRT.display();
+            //---RENDER DITHER---
+            ditherRT.clear(sf::Color::Transparent); // clear ditherRT
+            ditherRT.draw(lightingSprite, &ditherShader); // draw lighting sprite with dither shader applied
+            ditherRT.display(); // display ditherRT (but not drawn to window yet)
 
-            // ---FINAL COMPOSITE---
-
-            window.draw(worldSprite);
+            //---FINAL COMPOSITE---
+            window.draw(worldSprite); // draw world sprite to window first
 
             sf::RenderStates lightState;
-            lightState.blendMode = sf::BlendMultiply;
-            window.draw(sf::Sprite(ditherRT.getTexture()), lightState);
+            lightState.blendMode = sf::BlendMultiply; // blend lighting for dithered lighting effect
+            window.draw(sf::Sprite(ditherRT.getTexture()), lightState); // draw dithered lighting on top of world
 
+            //---DRAW CURSOR TEXT---
             window.draw(cursorText);
         }
 };
