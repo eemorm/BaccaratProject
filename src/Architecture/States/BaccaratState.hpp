@@ -11,6 +11,7 @@
 #include "../../Classes/Baccarat/BaccaratGame.hpp"
 #include "../../Classes/Baccarat/BaccaratBet.hpp"
 #include "../../Classes/LightSystem.hpp"
+#include "../../audio.hpp"
 
 // SFML
 #include <SFML/Audio.hpp>
@@ -56,11 +57,16 @@ class BaccaratState : public GameState
         sf::FloatRect bankerBetZone; // betting zone for banker
         sf::FloatRect tieBetZone; // betting zone for tie
         sf::FloatRect playerBetZone; // betting zone for player
+        int chipWealth = 0;
     
         //---MISC---
         sf::Vector2f mousePos; // mouse position
+        bool roundOver = false;
         sf::Text cursorText; // text to display cursor position for debugging; always updates
-
+        sf::Text moneyText;
+        sf::Text phaseText;
+        sf::Text winText;
+        sf::Text payoutText;
     public:
         // constructor, initializes objects that don't have default constructors
         inline BaccaratState(sf::RenderWindow& w) : 
@@ -103,7 +109,30 @@ class BaccaratState : public GameState
             cursorText.setCharacterSize(24);
             cursorText.setFillColor(sf::Color::Blue);
 
+            moneyText.setFont(font);
+            moneyText.setCharacterSize(24);
+            moneyText.setFillColor(sf::Color::White);
+            moneyText.setPosition(20.f, 20.f);
+
+            phaseText.setFont(font);
+            phaseText.setCharacterSize(24);
+            phaseText.setFillColor(sf::Color::White);
+            phaseText.setPosition(1175.f, 20.f);
+
+            winText.setFont(font);
+            winText.setCharacterSize(96);
+            winText.setPosition(20.f, 100.f);
+            winText.setFillColor(sf::Color(255, 255, 255, 255));
+            winText.setStyle(sf::Text::Bold);
+
+            payoutText.setFont(font);
+            payoutText.setCharacterSize(96);
+            payoutText.setPosition(20.f, 200.f);
+            payoutText.setFillColor(sf::Color(255, 255, 255, 255));
+            payoutText.setStyle(sf::Text::Bold);
+
             game.startRound(); // start the round of baccarat
+            playRandom(baccarat1);
         }
 
         // handles events such as mouse movement and clicks, passed from GameStateManager which is run from main.cpp
@@ -166,8 +195,8 @@ class BaccaratState : public GameState
             game.update(dt); // update the baccarat game logic with respect to delta time
 
             //---UPDATE LIGHTING---
-            lighting.clearDynamicLights(); // clear moving lights from last frame to update
-            lighting.addDynamicLight(Light(mousePos, 250.f, 1.0f, sf::Color::White)); // add back dynamic lights in order to give the appearance of movement
+            //lighting.clearDynamicLights(); // clear moving lights from last frame to update
+            //lighting.addDynamicLight(Light(mousePos, 250.f, 1.0f, sf::Color::White)); // add back dynamic lights in order to give the appearance of movement
             lighting.update(); // draw lighting (but not to RT yet)
 
             //---RENDER LIGHTING PASS---
@@ -178,12 +207,32 @@ class BaccaratState : public GameState
             //---RENDER WORLD PASS---
             worldRT.clear(sf::Color::White); // clear worldRT to have white as a background
 
+            if (!roundOver)
+            {
+                if (game.isRoundFinished())
+                {
+                    roundOver = true;
+                    int winnings = game.payout();
+                    chipWealth += winnings;
+                    payoutText.setString("Payout: $" + std::to_string(winnings));
+                }
+            }
+
             //---UPDATE CURSOR TEXT---
             cursorText.setString(
                 "X: " + std::to_string((int)mousePos.x) +
                 " Y: " + std::to_string((int)mousePos.y)
             );
             cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
+
+            moneyText.setString(
+            "Bet: $" + std::to_string(game.getBetAmount()) + 
+            "\nWealth: $" + std::to_string(chipWealth)
+            );
+
+            phaseText.setString(game.phaseToString(game.getPhase()));
+
+            winText.setString(game.resultToString());
         }
         // draws everything to the screen
         inline void draw(sf::RenderWindow& window) override
@@ -242,5 +291,9 @@ class BaccaratState : public GameState
 
             //---DRAW CURSOR TEXT---
             window.draw(cursorText);
+            window.draw(moneyText);
+            window.draw(phaseText);
+            window.draw(winText);
+            window.draw(payoutText);
         }
 };

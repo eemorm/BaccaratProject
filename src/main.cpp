@@ -1,6 +1,7 @@
 // Custom Includes
 #include "Architecture/Game.hpp"
 #include "textures.hpp"
+#include "audio.hpp"
 
 // SFML
 #include <SFML/Graphics.hpp>
@@ -13,6 +14,7 @@
 int main() // main function, where the flow of the game starts
 {
     loadTextures(); // load game textures
+    loadAudio(); // load game audio
 
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "BaccaratProject", sf::Style::Close); // declare window
     window.setFramerateLimit(60); // set fps limit to avoid too much GPU stress
