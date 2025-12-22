@@ -295,7 +295,7 @@ class BaccaratState : public GameState
                 worldRT.draw(c);
             }
 
-            worldRT.draw(chipWealthManager); // draw all chip stacks managed by wealth manager on top of everything else
+            worldRT.draw(chipWealthManager); // draw all chip stacks managed by wealth manager on top of everything else to ensure visibility over other stuff when dragging
 
             worldRT.display(); // display worldRT (but not drawn to window yet)
 
