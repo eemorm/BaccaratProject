@@ -22,11 +22,12 @@ class ChipStack : public sf::Drawable, public IObjectAction
             bool returning = false;
         };
 
+        sf::Vector2f position;
+
         std::vector<Chip> chips;
         std::vector<Chip> heldChips;
-        int chipValue = 10;
+        int chipValue;
 
-        sf::Vector2f position;
         float verticalOffset = 16.f;
         bool isDragging = false;
         int grabbedIndex = -1;
@@ -40,10 +41,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
                 target.draw(chip.sprite);
         }
     public:
-        ChipStack(sf::Vector2f pos)
-        {
-            position = pos;
-        }
+        ChipStack(sf::Vector2f p, int v) : position(p), chipValue(v) {}
         std::vector<Chip>& getChips() { return chips; }
         std::vector<Chip>& getHeldChips() { return heldChips; }
         int getChipValue() { return chipValue; }

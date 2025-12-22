@@ -74,7 +74,7 @@ class BaccaratState : public GameState
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
             game(deck),
-            bankStack({181.f, 625.f})
+            bankStack({181.f, 625.f}, 10)
         { 
             //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
