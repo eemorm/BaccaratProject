@@ -10,9 +10,13 @@
 // Standard Libraries
 #include <iostream>
 #include <vector>
+#include <ctime>
+#include <cstdlib>
 
 int main() // main function, where the flow of the game starts
 {
+    std::srand(static_cast<unsigned>(std::time(nullptr))); // seed random number generator
+
     loadTextures(); // load game textures
     loadAudio(); // load game audio
 
