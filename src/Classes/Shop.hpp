@@ -22,6 +22,7 @@ class Shop
         void buyItem(int index) 
         {
             if(index < 0 || index >= availableItems.size()) return;
+            if (playerInventory.getConsumables.size() < playerInventory.getConsumablesLimit()) return;
 
             ItemData* data = availableItems[index];
 
