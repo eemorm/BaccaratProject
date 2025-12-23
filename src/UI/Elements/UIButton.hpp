@@ -28,6 +28,7 @@ class UIButton : public UIElement
         UIButtonStyle style;
         std::function<void()> onClick;
         bool hovered = false;
+        bool active = true;
     public:
         UIButton(
             sf::Vector2f pos,
@@ -35,9 +36,10 @@ class UIButton : public UIElement
             const std::string& text,
             sf::Font& font,
             std::function<void()> callback,
-            UIButtonStyle style = {}
+            UIButtonStyle style = {},
+            bool active = true
         )
-        : style(style), onClick(callback)
+        : style(style), onClick(callback), active(active)
         {
             box.setPosition(pos);
             box.setSize(size);
@@ -49,8 +51,12 @@ class UIButton : public UIElement
             label.setFillColor(style.textColor);
             label.setPosition(pos + style.padding);
         }
+        bool getActive() { return active; }
+        void setActive(bool a) { active = a; }
         void handleEvent(sf::Event& event, sf::Vector2f& mouse) override 
         {
+            if (!active) return;
+
             hovered = box.getGlobalBounds().contains(mouse);
             box.setFillColor(hovered ? style.hoverColor : style.backgroundColor);
             if (hovered &&
@@ -60,9 +66,10 @@ class UIButton : public UIElement
                 onClick();
             }
         }
-        void draw(sf::RenderTarget& target) override 
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
         {
-            target.draw(box);
-            target.draw(label);
+            if (!active) return;
+            target.draw(box, states);
+            target.draw(label, states);
         }
 };

@@ -12,6 +12,8 @@ class UIManager
     private:
         std::vector<std::unique_ptr<UIElement>> elements;
     public:
+        const std::vector<std::unique_ptr<UIElement>>& getElements() const { return elements; }
+
         template<typename T, typename... Args>
         T& add(Args&&... args) 
         {
@@ -20,7 +22,6 @@ class UIManager
             elements.push_back(std::move(element));
             return ref;
         }
-
         void handleEvent(sf::Event& event, sf::Vector2f& mouse) 
         {
             for (auto& el : elements)
@@ -31,9 +32,9 @@ class UIManager
             for (auto& el : elements)
                 el->update(dt);
         }
-        void draw(sf::RenderTarget& target)
+        void draw(sf::RenderTarget& target, sf::RenderStates states)
         {
             for (auto& el : elements)
-                el->draw(target);
+                el->draw(target, states);
         }
 };

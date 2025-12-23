@@ -12,6 +12,7 @@
 #include "../../Classes/Baccarat/BaccaratGame.hpp"
 #include "../../Classes/Baccarat/BaccaratBet.hpp"
 #include "../../Classes/LightSystem.hpp"
+#include "../../UI/StateUI/BaccaratUI.hpp"
 #include "../../audio.hpp"
 
 // SFML
@@ -60,18 +61,19 @@ class BaccaratState : public GameState
         ChipStack stack50;
         ChipStack stack10;
         ChipStack stack1;
+        sf::FloatRect originalBankerBetZone;
+        sf::FloatRect originalTieBetZone;
+        sf::FloatRect originalPlayerBetZone;
         sf::FloatRect bankerBetZone; // betting zone for banker
         sf::FloatRect tieBetZone; // betting zone for tie
         sf::FloatRect playerBetZone; // betting zone for player
         bool roundOver = false; // flag to check if round is over, used to trigger payout only once
     
+        //---UI---
+        BaccaratUI ui;
+
         //---MISC---
         sf::Vector2f mousePos; // mouse position
-        sf::Text cursorText;
-        sf::Text moneyText;
-        sf::Text phaseText;
-        sf::Text winText;
-        sf::Text payoutText;
     public:
         // constructor, initializes objects that don't have default constructors
         inline BaccaratState(sf::RenderWindow& w) : 
@@ -82,7 +84,8 @@ class BaccaratState : public GameState
             stack100({55, 639}, 100),
             stack50({155, 639}, 50),
             stack10({255, 639}, 10),
-            stack1({355, 639}, 1)
+            stack1({355, 639}, 1),
+            ui(game)
         { 
             //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -111,6 +114,9 @@ class BaccaratState : public GameState
             bankerBetZone = { 499.f, 532.f, 103.f, 85.f };
             tieBetZone = { 617.f, 563.f, 159.f, 54.f };
             playerBetZone = { 762.f, 564.f, 153.f, 25.f };
+            originalBankerBetZone = bankerBetZone;
+            originalTieBetZone = tieBetZone;
+            originalPlayerBetZone = playerBetZone;
 
             //---SET UP WEALTH MANAGER---
             chipWealthManager.addStack(&stack1, 1);
@@ -118,33 +124,6 @@ class BaccaratState : public GameState
             chipWealthManager.addStack(&stack50, 50);
             chipWealthManager.addStack(&stack100, 100);
             chipWealthManager.setWealth(385);
-
-            //---SET UP CURSOR TEXT---
-            cursorText.setFont(font);
-            cursorText.setCharacterSize(24);
-            cursorText.setFillColor(sf::Color::Blue);
-
-            moneyText.setFont(font);
-            moneyText.setCharacterSize(24);
-            moneyText.setFillColor(sf::Color::White);
-            moneyText.setPosition(20.f, 20.f);
-
-            phaseText.setFont(font);
-            phaseText.setCharacterSize(24);
-            phaseText.setFillColor(sf::Color::White);
-            phaseText.setPosition(1175.f, 20.f);
-
-            winText.setFont(font);
-            winText.setCharacterSize(96);
-            winText.setPosition(20.f, 100.f);
-            winText.setFillColor(sf::Color(255, 255, 255, 255));
-            winText.setStyle(sf::Text::Bold);
-
-            payoutText.setFont(font);
-            payoutText.setCharacterSize(96);
-            payoutText.setPosition(20.f, 200.f);
-            payoutText.setFillColor(sf::Color(255, 255, 255, 255));
-            payoutText.setStyle(sf::Text::Bold);
 
             game.startRound(); // start the round of baccarat
             playRandom(baccarat1);
@@ -154,6 +133,7 @@ class BaccaratState : public GameState
         inline void handleEvent(sf::Event& event) override
         {
             mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window)); // get mouse position in world coordinates
+            ui.handleEvent(event, mousePos);
 
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) // left mouse button down
             {
@@ -200,7 +180,24 @@ class BaccaratState : public GameState
                     game.placeBet(target, amount); // place the bet
                     chosenStack->acceptBet(); // transfer chips by having bank stack accept the bet
                     chipWealthManager.addWealth(-amount); // deduct bet amount from player's wealth
-                    game.closeBetting(); // finish the betting phase
+                    
+                    // LOCK OTHER ZONES
+                    switch (target)
+                    {
+                        case BetTarget::Player:
+                            bankerBetZone.width = bankerBetZone.height = 0;
+                            tieBetZone.width = tieBetZone.height = 0;
+                            break;
+                        case BetTarget::Banker:
+                            playerBetZone.width = playerBetZone.height = 0;
+                            tieBetZone.width = tieBetZone.height = 0;
+                            break;
+                        case BetTarget::Tie:
+                            playerBetZone.width = playerBetZone.height = 0;
+                            bankerBetZone.width = bankerBetZone.height = 0;
+                            break;
+                        default: break;
+                    }
                 }
 
                 // final failsafe for if betting phase is going on, but no bet target was selected
@@ -230,6 +227,7 @@ class BaccaratState : public GameState
             //---RENDER WORLD PASS---
             worldRT.clear(sf::Color::White); // clear worldRT to have white as a background
 
+            //---CHECK FOR ROUND OVER AND PAYOUT---
             if (!roundOver)
             {
                 if (game.isRoundFinished())
@@ -237,25 +235,19 @@ class BaccaratState : public GameState
                     roundOver = true;
                     int winnings = game.payout();
                     chipWealthManager.addWealth(winnings);
-                    payoutText.setString("Payout: $" + std::to_string(winnings));
+                    ui.payoutText.setString("Payout: $" + std::to_string(winnings));
                 }
             }
 
-            //---UPDATE CURSOR TEXT---
-            cursorText.setString(
+            //---UPDATE TEXT---
+            ui.cursorText.setString(
                 "X: " + std::to_string((int)mousePos.x) +
                 " Y: " + std::to_string((int)mousePos.y)
             );
-            cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
-
-            moneyText.setString(
-            "Bet: $" + std::to_string(game.getBetAmount()) + 
-            "\nWealth: $" + std::to_string(chipWealthManager.getWealth())
-            );
-
-            phaseText.setString(game.phaseToString(game.getPhase()));
-
-            winText.setString(game.resultToString());
+            ui.cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
+            ui.moneyText.setString("Bet: $" + std::to_string(game.getBetAmount()) + "\nWealth: $" + std::to_string(chipWealthManager.getWealth()));
+            ui.phaseText.setString(game.phaseToString(game.getPhase()));
+            ui.winText.setString(game.resultToString());
         }
         // draws everything to the screen
         inline void draw(sf::RenderWindow& window) override
@@ -312,11 +304,6 @@ class BaccaratState : public GameState
             lightState.blendMode = sf::BlendMultiply; // blend lighting for dithered lighting effect
             window.draw(sf::Sprite(ditherRT.getTexture()), lightState); // draw dithered lighting on top of world
 
-            //---DRAW CURSOR TEXT---
-            window.draw(cursorText);
-            window.draw(moneyText);
-            window.draw(phaseText);
-            window.draw(winText);
-            window.draw(payoutText);
+            window.draw(ui); // draw UI on top of everything else
         }
 };
