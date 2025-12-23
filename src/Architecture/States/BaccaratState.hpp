@@ -84,7 +84,7 @@ class BaccaratState : public GameState
             ditherRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
             //---STATIC LIGHTS---
-            lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White));
+            lighting.addStaticLight(Light({300, 400}, 1500.f, 0.5f, sf::Color::White, true));
 
             //---SET UP WEALTH MANAGER---
             chipWealthManager.initializeManager();
@@ -188,7 +188,7 @@ class BaccaratState : public GameState
             //---UPDATE LIGHTING---
             //lighting.clearDynamicLights(); // clear moving lights from last frame to update
             //lighting.addDynamicLight(Light(mousePos, 250.f, 1.0f, sf::Color::White)); // add back dynamic lights in order to give the appearance of movement
-            lighting.update(); // draw lighting (but not to RT yet)
+            lighting.update(dt); // draw lighting (but not to RT yet)
 
             //---RENDER LIGHTING PASS---
             lightingRT.clear(sf::Color::Black); // clear lighting RT to black so that holes can be cut to show lighting

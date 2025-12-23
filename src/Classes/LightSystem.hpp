@@ -9,6 +9,8 @@
 // Standard I/O
 #include <iostream>
 #include <vector>
+#include <cmath>
+#include <cstdlib>
 
 class LightSystem : public sf::Drawable
 {
@@ -51,9 +53,9 @@ class LightSystem : public sf::Drawable
             softCircleTexture.setSmooth(true);
         }
     public:
-        LightSystem(int width, int height)
+        LightSystem(int w, int h)
         {
-            mask.create(width, height);
+            mask.create(w, h);
             maskSprite.setTexture(mask.getTexture());
 
             createSoftCircleTexture(512);
@@ -64,9 +66,23 @@ class LightSystem : public sf::Drawable
         void addDynamicLight(const Light& light) { dynamicLights.push_back(light); }
         void clearStaticLights() { staticLights.clear(); }
         void clearDynamicLights() { dynamicLights.clear(); }
-        void update()
+        void update(float dt)
         {
             mask.clear(sf::Color::Black);
+
+            for (auto& l : staticLights)
+            {
+                if (l.flicker)
+                {
+                    l.flickerTimer += dt;
+                    if (l.flickerTimer >= l.flickerInterval)
+                    {
+                        l.flickerTimer = 0.f;
+                        float factor = 1.f + ((std::rand() % 1000 / 1000.f) - 0.5f) * 2.f * l.flickerDifference;
+                        l.intensity = l.baseIntensity * factor;
+                    }
+                }
+            }
 
             auto drawLight = [&](const Light& l)
             {
