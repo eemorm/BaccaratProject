@@ -2,29 +2,41 @@
 
 // Custom Includes
 #include "BaccaratHand.hpp"
-#include "BaccaratResult.hpp"
-#include "BaccaratRules.hpp"
-#include "BaccaratBet.hpp"
-#include "../Deck.hpp"
+#include "../Classes/Deck.hpp"
+#include "../Classes/Card.hpp"
 
 // Standard Libraries
 #include <vector>
 #include <random>
 #include <optional>
 
+enum class BetTarget
+{
+    None,
+    Player,
+    Banker,
+    Tie
+};
+enum class BaccaratResult 
+{
+    Player,
+    Banker,
+    Tie
+};
+enum class BaccaratPhase
+{
+    Idle,
+    Betting,
+    DealingInitial,
+    PlayerThirdCard,
+    BankerThirdCard,
+    Resolve,
+    Finished
+};
+
 class BaccaratGame
 {
     private:
-        enum class BaccaratPhase
-        {
-            Idle,
-            Betting,
-            DealingInitial,
-            PlayerThirdCard,
-            BankerThirdCard,
-            Resolve,
-            Finished
-        };
         struct Bet
         {
             BetTarget target = BetTarget::None;
@@ -40,21 +52,12 @@ class BaccaratGame
         Bet currentBet;
     public:
         BaccaratGame(Deck& d) : deck(d) { rng = std::mt19937{ std::random_device{}() };}
+
+        BaccaratHand& getPlayerHand() { return playerHand; }
+        BaccaratHand& getBankerHand() { return bankerHand; }
         int getBetAmount() { return currentBet.amount; }
-        BaccaratPhase getPhase() { return phase; }
-        bool isRoundFinished() { return phase == BaccaratPhase::Finished; }
-        std::string phaseToString(BaccaratPhase phase) 
-        {
-            switch (phase) 
-            {
-                case BaccaratPhase::Betting: return "PHASE: BETTING";
-                case BaccaratPhase::DealingInitial: return "PHASE: DEALING";
-                case BaccaratPhase::PlayerThirdCard: return "PHASE: RESOLVING";
-                case BaccaratPhase::BankerThirdCard: return "PHASE: RESOLVING";
-                case BaccaratPhase::Resolve: return "PHASE: RESOLVING";
-                default: return "";
-            }
-        }
+        BaccaratPhase getGamePhase() { return phase; }
+
         Card drawCard() { return deck.drawCardFromDeck(); }
         void startRound() 
         {
@@ -63,7 +66,6 @@ class BaccaratGame
             phase = BaccaratPhase::Betting;
             phaseTimer = 0.f;
         }
-        bool isBettingOpen() { return phase == BaccaratPhase::Betting; }
         void placeBet(BetTarget target, int amount)
         {
             if (phase != BaccaratPhase::Betting) return;
@@ -71,7 +73,44 @@ class BaccaratGame
             currentBet.target = target;
             currentBet.amount += amount;
         }
+        void lockBetZones(BetTarget& target, sf::FloatRect& b, sf::FloatRect& t, sf::FloatRect& p)
+        {
+            switch (target)
+            {
+                case BetTarget::Player:
+                    b.width = b.height = 0; t.width = t.height = 0;
+                    break;
+                case BetTarget::Banker:
+                    p.width = p.height = 0; t.width = t.height = 0;
+                    break;
+                case BetTarget::Tie:
+                    p.width = p.height = 0; b.width = b.height = 0;
+                    break;
+                default: 
+                    break;
+            }
+        }
         void closeBetting() { phase = BaccaratPhase::DealingInitial; }
+        bool doesPlayerDrawAThirdCard(BaccaratHand& player) { return player.total() <= 5; }
+        bool doesBankerDrawAThirdCard(BaccaratHand& banker, Card playerThirdCard) 
+        {
+            int total = banker.total();
+
+            if (total <= 2) return true;
+            if (total == 3 && playerThirdCard.getValue() != 8) return true;
+            if (total == 4 && (playerThirdCard.getValue() >= 2 && playerThirdCard.getValue() <= 7)) return true;
+            if (total == 5 && (playerThirdCard.getValue() >= 4 && playerThirdCard.getValue() <= 7)) return true;
+            if (total == 6 && (playerThirdCard.getValue() == 6 || playerThirdCard.getValue() == 7)) return true;
+            return false;
+        }
+        BaccaratResult determineWinner(BaccaratHand& player, BaccaratHand& banker) 
+        {
+            int playerTotal = player.total();
+            int bankerTotal = banker.total();
+            if (playerTotal > bankerTotal) { return BaccaratResult::Player; }
+            if (bankerTotal > playerTotal) { return BaccaratResult::Banker; }
+            return BaccaratResult::Tie;
+        }
         void dealInitial()
         {
             if (phaseTimer < 0.5f) return;
@@ -142,6 +181,18 @@ class BaccaratGame
 
             return amount;
         }
+        std::string phaseToString(BaccaratPhase phase) 
+        {
+            switch (phase) 
+            {
+                case BaccaratPhase::Betting: return "PHASE: BETTING";
+                case BaccaratPhase::DealingInitial: return "PHASE: DEALING";
+                case BaccaratPhase::PlayerThirdCard: return "PHASE: RESOLVING";
+                case BaccaratPhase::BankerThirdCard: return "PHASE: RESOLVING";
+                case BaccaratPhase::Resolve: return "PHASE: RESOLVING";
+                default: return "";
+            }
+        }
         std::string resultToString() 
         {
             if (phase != BaccaratPhase::Finished) return "";
@@ -153,8 +204,6 @@ class BaccaratGame
                 default: return "";
             }
         }
-        BaccaratHand& getPlayerHand() { return playerHand; }
-        BaccaratHand& getBankerHand() { return bankerHand; }
         void update(float dt)
         {
             phaseTimer += dt;

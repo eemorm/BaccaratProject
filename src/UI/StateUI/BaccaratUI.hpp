@@ -4,7 +4,7 @@
 #include "../../textures.hpp"
 #include "../UIManager.hpp"
 #include "../Elements/UIButton.hpp"
-#include "../../Classes/Baccarat/BaccaratGame.hpp"
+#include "../../Baccarat/BaccaratGame.hpp"
 
 class BaccaratUI : public sf::Drawable
 {
@@ -37,7 +37,7 @@ class BaccaratUI : public sf::Drawable
                 "Confirm Bet",
                 font,
                 [&]() {
-                    if (game.isBettingOpen() && game.getBetAmount() > 0)
+                    if (game.getGamePhase() == BaccaratPhase::Betting && game.getBetAmount() > 0)
                     {
                         game.closeBetting();
                         confirmBetButton.setActive(false);

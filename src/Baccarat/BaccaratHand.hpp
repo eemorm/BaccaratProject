@@ -1,7 +1,7 @@
 #pragma once
 
 // Custom Includes
-#include "../Card.hpp"
+#include "../Classes/Card.hpp"
 
 // Standard Libraries
 #include <vector>
