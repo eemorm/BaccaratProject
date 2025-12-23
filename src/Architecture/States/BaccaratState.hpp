@@ -78,7 +78,7 @@ class BaccaratState : public GameState
             window(w),
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
-            game(deck),,
+            game(deck),
             stack100({55, 639}, 100),
             stack50({155, 639}, 50),
             stack10({255, 639}, 10),
@@ -95,10 +95,7 @@ class BaccaratState : public GameState
             //---PREPARE GAME OBJECTS---
             deck.setPosition({1100, 600});
             deck.shuffleDeck();
-            for (int i = 0; i < 10; ++i)
-            {
-                bankStack.addChip(theDealerBackground);
-            }
+
             clickables.push_back(&stack100);
             clickables.push_back(&stack50);
             clickables.push_back(&stack10);
@@ -203,7 +200,7 @@ class BaccaratState : public GameState
                     game.placeBet(target, amount); // place the bet
                     chosenStack->acceptBet(); // transfer chips by having bank stack accept the bet
                     chipWealthManager.addWealth(-amount); // deduct bet amount from player's wealth
-                    game.closeBetting(); // finish the betting phase with a call to BaccaratGame
+                    game.closeBetting(); // finish the betting phase
                 }
 
                 // final failsafe for if betting phase is going on, but no bet target was selected
