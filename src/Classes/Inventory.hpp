@@ -20,8 +20,8 @@ class Inventory
         size_t consumablesLimit = 5;
     public:
         Inventory() {}
-        Weapon* getEquippedWeapon() { return equippedWeapon.get(); }
-        Armor* getEquippedArmor() { return equippedArmor.get(); }
+        Item* getEquippedWeapon() { return equippedWeapon.get(); }
+        Item* getEquippedArmor() { return equippedArmor.get(); }
         Consumable* getConsumable(int index) { if(index < 0 || index >= consumables.size()) return nullptr; return consumables[index].get(); }
         std::vector<std::unique_ptr<Consumable>>& getConsumables() { return consumables; }
         size_t getConsumablesLimit() { return consumablesLimit; }

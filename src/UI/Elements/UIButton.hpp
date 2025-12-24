@@ -52,7 +52,7 @@ class UIButton : public UIElement
             label.setPosition(pos + style.padding);
         }
         bool getActive() { return active; }
-        void setActive(bool a) { active = a; }
+        void changeActive() { active = !active; }
         void handleEvent(sf::Event& event, sf::Vector2f& mouse) override 
         {
             if (!active) return;

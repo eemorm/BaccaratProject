@@ -10,6 +10,9 @@
 #include "../../Classes/WealthManager.hpp"
 #include "../../Classes/Interfaces/IObjectAction.hpp"
 #include "../../Baccarat/BaccaratGame.hpp"
+#include "../../Classes/ItemDatabase.hpp"
+#include "../../Classes/Shop.hpp"
+#include "../../Classes/Inventory.hpp"
 #include "../../Classes/LightSystem.hpp"
 #include "../../UI/StateUI/BaccaratUI.hpp"
 #include "../../audio.hpp"
@@ -64,6 +67,10 @@ class BaccaratState : public GameState
         sf::FloatRect playerBetZone; // betting zone for player
         bool roundOver = false; // flag to check if round is over, used to trigger payout only once
     
+        //---SHOP AND PLAYER---
+        Shop shop;
+        Inventory inventory;
+
         //---UI---
         BaccaratUI ui;
 
@@ -76,6 +83,7 @@ class BaccaratState : public GameState
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
             game(deck),
+            shop(&inventory, &chipWealthManager),
             ui(game)
         { 
             //---CREATE RENDER TEXTURES---
@@ -112,6 +120,9 @@ class BaccaratState : public GameState
             originalTieBetZone = tieBetZone;
             originalPlayerBetZone = playerBetZone;
 
+            //---SHOP---
+            shop.initializeShop();
+
             game.startRound(); // start the round of baccarat
             playRandom(baccarat1);
         }
@@ -120,6 +131,10 @@ class BaccaratState : public GameState
         inline void handleEvent(sf::Event& event) override
         {
             mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window)); // get mouse position in world coordinates
+            
+            shop.handleEvent(event, mousePos);
+            if (shop.getShopOpen()) return;
+
             ui.handleEvent(event, mousePos);
 
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) // left mouse button down
@@ -276,5 +291,6 @@ class BaccaratState : public GameState
             window.draw(sf::Sprite(ditherRT.getTexture()), lightState); // draw dithered lighting on top of world
 
             window.draw(ui); // draw UI on top of everything else
+            window.draw(shop);
         }
 };

@@ -40,7 +40,7 @@ class BaccaratUI : public sf::Drawable
                     if (game.getGamePhase() == BaccaratPhase::Betting && game.getBetAmount() > 0)
                     {
                         game.closeBetting();
-                        confirmBetButton.setActive(false);
+                        confirmBetButton.changeActive();
                     }
                 }
             ))

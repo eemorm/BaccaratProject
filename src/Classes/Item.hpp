@@ -10,6 +10,7 @@ enum class ItemType { Weapon, Armor, Consumable };
 struct ItemData 
 {
     std::string name;
+    std::string description;
     int price;
     ItemType type;
     sf::Texture sprite;
