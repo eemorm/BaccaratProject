@@ -131,7 +131,7 @@ class BaccaratState : public GameState
         inline void handleEvent(sf::Event& event) override
         {
             mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window)); // get mouse position in world coordinates
-            
+
             shop.handleEvent(event, mousePos);
             if (shop.getShopOpen()) return;
 
@@ -290,7 +290,8 @@ class BaccaratState : public GameState
             lightState.blendMode = sf::BlendMultiply; // blend lighting for dithered lighting effect
             window.draw(sf::Sprite(ditherRT.getTexture()), lightState); // draw dithered lighting on top of world
 
-            window.draw(ui); // draw UI on top of everything else
+            if (!shop.getShopOpen())
+                window.draw(ui); // draw UI on top of everything else
             window.draw(shop);
         }
 };
