@@ -28,6 +28,8 @@ jobs:
       - name: Configure build with Meson
         shell: bash
         run: |
+          setx CC "cl"
+          setx CXX "cl"
           mkdir -p build
           cd build
           meson setup --cross-file ../windows-cross.ini ..
