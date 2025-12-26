@@ -10,8 +10,9 @@ if host_machine.system() == 'darwin'
   sfml_inc = include_directories('/opt/homebrew/Cellar/sfml@2/2.6.2_1/include')
   sfml_lib_dir = '/opt/homebrew/Cellar/sfml@2/2.6.2_1/lib'
 elif host_machine.system() == 'windows'
-  sfml_inc = include_directories(meson.current_source_dir() + '/libs/SFML/include')
-  sfml_lib_dir = meson.current_source_dir() + '/libs/SFML/lib'
+  # Windows (SFML inside project)
+  sfml_inc = include_directories('libs/SFML/include')
+  sfml_lib_dir = 'libs/SFML/lib'
 endif
 
 # ---- Find SFML libraries ----
