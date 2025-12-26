@@ -24,38 +24,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install meson ninja
 
-      # 3. Cache SFML so it doesn’t download every run
-      - name: Cache SFML
-        id: sfml-cache
-        uses: actions/cache@v4
-        with:
-          path: sfml
-          key: sfml-2.5.1-${{ runner.os }}
-
-      # 4. Download SFML only if cache is missed
-      - name: Download SFML
-        if: steps.sfml-cache.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          Invoke-WebRequest -Uri https://github.com/SFML/SFML/releases/download/2.5.1/SFML-2.5.1-windows-gcc-64-bit.zip -OutFile sfml.zip
-          Expand-Archive sfml.zip -DestinationPath sfml
-
-      # 5. Configure Meson build
+      # 3. Configure Meson build
       - name: Configure build with Meson
         shell: bash
         run: |
           mkdir -p build
           cd build
-          meson setup --cross-file ../windows-cross.ini -DSFML_DIR=../sfml ..
+          meson setup --cross-file ../windows-cross.ini -DSFML_DIR=../libs/SFML-2.6.2 ..
 
-      # 6. Build the game
+      # 4. Build the game
       - name: Build
         shell: bash
         run: |
           cd build
           ninja
 
-      # 7. Upload the compiled Windows EXE as an artifact
+      # 5. Upload the compiled Windows EXE as an artifact
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
