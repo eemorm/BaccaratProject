@@ -38,11 +38,10 @@ class Inventory
         }
         int getAttacks() { return attacks; }
         void addAttack(int amount) { attacks += amount; }
-        bool useAttack()
+        void useAttack()
         {
             if (attacks <= 0)
-                return false;
+                return;
             attacks--;
-            return true;
         }
 };

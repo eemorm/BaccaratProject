@@ -13,6 +13,9 @@
 #include "../../Classes/ItemDatabase.hpp"
 #include "../../Classes/Shop.hpp"
 #include "../../Classes/Inventory.hpp"
+#include "../../Classes/Complex.hpp"
+#include "../../Classes/PlayerCombat.hpp"
+#include "../../Classes/CombatSystem.hpp"
 #include "../../Classes/LightSystem.hpp"
 #include "../../UI/StateUI/BaccaratUI.hpp"
 #include "../../audio.hpp"
@@ -71,6 +74,13 @@ class BaccaratState : public GameState
         Shop shop;
         Inventory inventory;
 
+        //---COMPLEX AND FLOW---
+        Complex complex;
+
+        //---COMBAT SYSTEM---
+        PlayerCombat playerCombat;
+        CombatSystem combatSystem;
+
         //---UI---
         BaccaratUI ui;
 
@@ -84,6 +94,8 @@ class BaccaratState : public GameState
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
             game(deck),
             shop(&inventory, &chipWealthManager),
+            playerCombat(&inventory, 100),
+            combatSystem(&complex, &playerCombat),
             ui(game)
         { 
             //---CREATE RENDER TEXTURES---
@@ -123,6 +135,9 @@ class BaccaratState : public GameState
             //---SHOP---
             shop.initializeShop();
 
+            //---COMPLEX AND FLOW---
+            complex.spawnEnemiesForFloor();
+
             game.startRound(); // start the round of baccarat
             playRandom(baccarat1);
         }
@@ -145,6 +160,8 @@ class BaccaratState : public GameState
                         object->onMoveStart(mousePos); // start moving object
                         chosenStack = dynamic_cast<ChipStack*>(object);
                     }
+
+                combatSystem.handlePlayerClick(mousePos);
             }
             if (event.type == sf::Event::MouseMoved) // if mouse moved
             {
@@ -225,6 +242,8 @@ class BaccaratState : public GameState
                 }
             }
 
+            combatSystem.update();
+
             //---UPDATE TEXT---
             ui.cursorText.setString(
                 "X: " + std::to_string((int)mousePos.x) +
@@ -271,6 +290,11 @@ class BaccaratState : public GameState
             }
 
             worldRT.draw(chipWealthManager); // draw all chip stacks managed by wealth manager on top of everything else to ensure visibility over other stuff when dragging
+
+            for (auto& enemy : complex.getCurrentEnemies())
+            {
+                worldRT.draw(*enemy);
+            }
 
             worldRT.display(); // display worldRT (but not drawn to window yet)
 
