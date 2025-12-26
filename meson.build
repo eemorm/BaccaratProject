@@ -1,6 +1,4 @@
-project('BaccaratProject', 'cpp',
-  default_options: ['cpp_std=c++17']
-)
+project('BaccaratProject', 'cpp', default_options: ['cpp_std=c++17'])
 
 cxx = meson.get_compiler('cpp')
 
@@ -22,20 +20,19 @@ elif host_machine.system() == 'windows'
   # Windows (SFML inside project)
   sfml_inc = include_directories('libs/SFML/include')
 
-  # Wrap static SFML libs as project-built targets
-  sfml_graphics = static_library('sfml-graphics', 'libs/SFML/lib/sfml-graphics-s.lib')
-  sfml_window   = static_library('sfml-window',   'libs/SFML/lib/sfml-window-s.lib')
-  sfml_system   = static_library('sfml-system',   'libs/SFML/lib/sfml-system-s.lib')
-  sfml_network  = static_library('sfml-network',  'libs/SFML/lib/sfml-network-s.lib')
-  sfml_audio    = static_library('sfml-audio',    'libs/SFML/lib/sfml-audio-s.lib')
-
-  sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
+  windows_libs = [
+    'libs/SFML/lib/sfml-graphics-s.lib',
+    'libs/SFML/lib/sfml-window-s.lib',
+    'libs/SFML/lib/sfml-system-s.lib',
+    'libs/SFML/lib/sfml-network-s.lib',
+    'libs/SFML/lib/sfml-audio-s.lib',
+  ]
 endif
 
 # ---- Sources ----
 sources = files('src/main.cpp')
 
-# ---- Build Executable ----
+# ---- Executable ----
 if host_machine.system() == 'darwin'
   executable(
     'BaccaratProject',
@@ -48,6 +45,6 @@ elif host_machine.system() == 'windows'
     'BaccaratProject',
     sources,
     include_directories: sfml_inc,
-    link_with: sfml_deps
+    link_args: windows_libs
   )
 endif
