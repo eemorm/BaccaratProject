@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/upload-artifact@v4
 
       - name: Install MSYS2 and Meson
         shell: pwsh
