@@ -9,7 +9,7 @@ if host_machine.system() == 'darwin'
   # macOS (Homebrew SFML)
   sfml_inc = include_directories('/opt/homebrew/Cellar/sfml@2/2.6.2_1/include')
   sfml_lib_dir = '/opt/homebrew/Cellar/sfml@2/2.6.2_1/lib'
-if host_machine.system() == 'windows'
+elif host_machine.system() == 'windows'
   sfml_inc = include_directories('libs/SFML/include')
   sfml_lib_dir = 'libs/SFML/lib'
 endif
