@@ -250,6 +250,12 @@ class BaccaratState : public GameState
                 }
             }
 
+            if (complex.getCurrentEnemies().empty())
+            {
+                complex.nextFloor();
+                restartGame();
+            }
+
             combatSystem.update();
 
             //---UPDATE TEXT---
@@ -340,6 +346,7 @@ class BaccaratState : public GameState
             ui.winText.setString("");
             ui.payoutText.setString("");
             ui.confirmBetButton.setActive(true);
+            ui.restartGameButton.setActive(false);
 
             game.startRound();
         }
