@@ -232,7 +232,7 @@ class BaccaratState : public GameState
             );
             ui.cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
             ui.moneyText.setString("Bet: $" + std::to_string(game.getBetAmount()) + "\nWealth: $" + std::to_string(chipWealthManager.getWealth()));
-            ui.phaseText.setString(game.phaseToString(game.getGamePhase()));
+            ui.attacksText.setString("Attacks: " + std::to_string(inventory.getAttacks()));
             ui.winText.setString(game.resultToString());
         }
         // draws everything to the screen

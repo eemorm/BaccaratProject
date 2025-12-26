@@ -17,6 +17,8 @@ class Inventory
         std::unique_ptr<Item> equippedArmor;
         std::vector<std::unique_ptr<Consumable>> consumables;
 
+        int attacks = 0;
+
         size_t consumablesLimit = 5;
     public:
         Inventory() {}
@@ -33,5 +35,14 @@ class Inventory
             if(index < 0 || index >= consumables.size()) return;
             consumables[index]->use();
             consumables.erase(consumables.begin() + index);
+        }
+        int getAttacks() { return attacks; }
+        void addAttack(int amount) { attacks += amount; }
+        bool useAttack()
+        {
+            if (attacks <= 0)
+                return false;
+            attacks--;
+            return true;
         }
 };

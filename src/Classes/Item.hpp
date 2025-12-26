@@ -6,7 +6,7 @@
 // Standard Libraries
 #include <string>
 
-enum class ItemType { Weapon, Armor, Consumable };
+enum class ItemType { Weapon, Armor, Consumable, Attack };
 struct ItemData 
 {
     std::string name;

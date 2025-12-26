@@ -32,4 +32,13 @@ namespace ItemDB
         .damage = 0,
         .armorValue = 0
     };
+    inline ItemData Attack 
+    {
+        .name = "Attack",
+        .description = "Allows an attack.",
+        .price = 100,
+        .type = ItemType::Attack,
+        .damage = 0,
+        .armorValue = 0
+    };
 }

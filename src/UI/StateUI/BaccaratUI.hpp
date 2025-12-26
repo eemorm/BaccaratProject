@@ -18,14 +18,14 @@ class BaccaratUI : public sf::Drawable
                 target.draw(*element, states);
             target.draw(cursorText, states);
             target.draw(moneyText, states);
-            target.draw(phaseText, states);
+            target.draw(attacksText, states);
             target.draw(winText, states);
             target.draw(payoutText, states);
         }
     public:
         sf::Text cursorText;
         sf::Text moneyText;
-        sf::Text phaseText;
+        sf::Text attacksText;
         sf::Text winText;
         sf::Text payoutText;
         UIButton& confirmBetButton;
@@ -54,10 +54,10 @@ class BaccaratUI : public sf::Drawable
             moneyText.setFillColor(sf::Color::White);
             moneyText.setPosition(20.f, 20.f);
 
-            phaseText.setFont(font);
-            phaseText.setCharacterSize(24);
-            phaseText.setFillColor(sf::Color::White);
-            phaseText.setPosition(1175.f, 20.f);
+            attacksText.setFont(font);
+            attacksText.setCharacterSize(24);
+            attacksText.setFillColor(sf::Color::White);
+            attacksText.setPosition(1225.f, 20.f);
 
             winText.setFont(font);
             winText.setCharacterSize(96);

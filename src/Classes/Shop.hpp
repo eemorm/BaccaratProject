@@ -47,6 +47,7 @@ class Shop : public sf::Drawable
             availableItems.push_back(&ItemDB::Dagger);
             availableItems.push_back(&ItemDB::Vest);
             availableItems.push_back(&ItemDB::Heal);
+            availableItems.push_back(&ItemDB::Attack);
         }
         void addItem(ItemData* data) { availableItems.push_back(data); }
         void buyItem(int index) 
@@ -66,11 +67,14 @@ class Shop : public sf::Drawable
                     playerInventory->equipArmor(std::make_unique<Item>(data)); break;
                 case ItemType::Consumable: 
                     playerInventory->addConsumable(std::make_unique<Consumable>(data)); break;
+                case ItemType::Attack:
+                    playerInventory->addAttack(1); break;
                 default: return;
             }
             std::cout << "Bought " << data->name << " for " << data->price << " coins.\n";
             chipWealthManager->addWealth(-(data->price));
-            availableItems.erase(availableItems.begin() + index);
+            if (data->type != ItemType::Attack)
+                availableItems.erase(availableItems.begin() + index);
             hoveredIndex = -1;
         }
         void handleEvent(sf::Event& event, sf::Vector2f mousePos) 
