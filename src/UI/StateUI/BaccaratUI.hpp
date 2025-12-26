@@ -29,6 +29,7 @@ class BaccaratUI : public sf::Drawable
         sf::Text winText;
         sf::Text payoutText;
         UIButton& confirmBetButton;
+        UIButton& restartGameButton;
     
         BaccaratUI(BaccaratGame& g) : game(g), confirmBetButton(ui.add<UIButton>
             (
@@ -40,8 +41,17 @@ class BaccaratUI : public sf::Drawable
                     if (game.getGamePhase() == BaccaratPhase::Betting && game.getBetAmount() > 0)
                     {
                         game.closeBetting();
-                        confirmBetButton.changeActive();
+                        confirmBetButton.setActive(false);
                     }
+                }
+            )),
+            restartGameButton(ui.add<UIButton>(
+                sf::Vector2f(1146, 300),
+                sf::Vector2f(200, 50),
+                "Play Again",
+                font,
+                [&]() {
+                    
                 }
             ))
         {

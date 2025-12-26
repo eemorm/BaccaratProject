@@ -25,8 +25,8 @@ class UIButton : public UIElement
     private:
         sf::RectangleShape box;
         sf::Text label;
-        UIButtonStyle style;
         std::function<void()> onClick;
+        UIButtonStyle style;
         bool hovered = false;
         bool active = true;
     public:
@@ -39,7 +39,7 @@ class UIButton : public UIElement
             UIButtonStyle style = {},
             bool active = true
         )
-        : style(style), onClick(callback), active(active)
+        : onClick(callback), style(style), active(active)
         {
             box.setPosition(pos);
             box.setSize(size);
@@ -52,7 +52,7 @@ class UIButton : public UIElement
             label.setPosition(pos + style.padding);
         }
         bool getActive() { return active; }
-        void changeActive() { active = !active; }
+        void setActive(bool a) { active = a; }
         void handleEvent(sf::Event& event, sf::Vector2f& mouse) override 
         {
             if (!active) return;
@@ -72,4 +72,5 @@ class UIButton : public UIElement
             target.draw(box, states);
             target.draw(label, states);
         }
+        void setOnClick(std::function<void()> callback) { onClick = callback; }
 };

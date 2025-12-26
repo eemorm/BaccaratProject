@@ -138,6 +138,10 @@ class BaccaratState : public GameState
             //---COMPLEX AND FLOW---
             complex.spawnEnemiesForFloor();
 
+            //---UI---
+            ui.restartGameButton.setOnClick([this]() { restartGame(); ui.restartGameButton.setActive(false); });
+            ui.restartGameButton.setActive(false);
+
             game.startRound(); // start the round of baccarat
             playRandom(baccarat1);
         }
@@ -239,6 +243,10 @@ class BaccaratState : public GameState
                     int winnings = game.payout();
                     chipWealthManager.addWealth(winnings);
                     ui.payoutText.setString("Payout: $" + std::to_string(winnings));
+                    if (chipWealthManager.getWealth() > 0)
+                        ui.restartGameButton.setActive(true);
+                    else
+                        std::cout << "YOU DIED!" << std::endl;
                 }
             }
 
@@ -317,5 +325,22 @@ class BaccaratState : public GameState
             if (!shop.getShopOpen())
                 window.draw(ui); // draw UI on top of everything else
             window.draw(shop);
+        }
+
+        void restartGame()
+        {
+            deck.shuffleDeck();
+
+            roundOver = false;
+
+            bankerBetZone = originalBankerBetZone;
+            tieBetZone = originalTieBetZone;
+            playerBetZone = originalPlayerBetZone;
+
+            ui.winText.setString("");
+            ui.payoutText.setString("");
+            ui.confirmBetButton.setActive(true);
+
+            game.startRound();
         }
 };
