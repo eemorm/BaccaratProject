@@ -1,0 +1,48 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install MSYS2 and Meson
+        shell: pwsh
+        run: |
+          choco install --yes msys2
+          choco install --yes python
+          python -m pip install --upgrade pip
+          pip install meson ninja
+
+      - name: Download SFML
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://www.sfml-dev.org/files/SFML-2.5.1-windows-gcc-64-bit.zip -OutFile sfml.zip
+          Expand-Archive sfml.zip -DestinationPath sfml
+
+      - name: Configure build with Meson
+        shell: bash
+        run: |
+          mkdir build
+          cd build
+          meson setup --cross-file ../windows-cross.ini ..
+
+      - name: Build
+        shell: bash
+        run: |
+          cd build
+          ninja
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v3
+        with:
+          name: Baccarat-Windows
+          path: build/Baccarat.exe
