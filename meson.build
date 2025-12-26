@@ -36,9 +36,18 @@ endif
 sources = files('src/main.cpp')
 
 # ---- Build Executable ----
-executable(
-  'BaccaratProject',
-  sources,
-  include_directories: sfml_inc,
-  dependencies: sfml_deps
-)
+if host_machine.system() == 'darwin'
+  executable(
+    'BaccaratProject',
+    sources,
+    include_directories: sfml_inc,
+    dependencies: sfml_deps
+  )
+elif host_machine.system() == 'windows'
+  executable(
+    'BaccaratProject',
+    sources,
+    include_directories: sfml_inc,
+    link_with: sfml_deps
+  )
+endif
