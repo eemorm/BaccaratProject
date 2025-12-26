@@ -1,7 +1,6 @@
 #pragma once
 
 // Custom Includes
-#include "BaccaratState.hpp"
 #include "../../textures.hpp"
 #include "../GameState.hpp"
 #include "../../Classes/Card.hpp"
