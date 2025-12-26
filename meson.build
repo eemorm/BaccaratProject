@@ -23,11 +23,11 @@ elif host_machine.system() == 'windows'
   sfml_inc = include_directories('libs/SFML/include')
 
   # Wrap static SFML libs as project-built targets
-  sfml_graphics = static_library('sfml-graphics', 'libs/SFML/lib/libsfml-graphics-s.a')
-  sfml_window   = static_library('sfml-window',   'libs/SFML/lib/libsfml-window-s.a')
-  sfml_system   = static_library('sfml-system',   'libs/SFML/lib/libsfml-system-s.a')
-  sfml_network  = static_library('sfml-network',  'libs/SFML/lib/libsfml-network-s.a')
-  sfml_audio    = static_library('sfml-audio',    'libs/SFML/lib/libsfml-audio-s.a')
+  sfml_graphics = static_library('sfml-graphics', 'libs/SFML/lib/sfml-graphics-s.lib')
+  sfml_window   = static_library('sfml-window',   'libs/SFML/lib/sfml-window-s.lib')
+  sfml_system   = static_library('sfml-system',   'libs/SFML/lib/sfml-system-s.lib')
+  sfml_network  = static_library('sfml-network',  'libs/SFML/lib/sfml-network-s.lib')
+  sfml_audio    = static_library('sfml-audio',    'libs/SFML/lib/sfml-audio-s.lib')
 
   sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
 endif
