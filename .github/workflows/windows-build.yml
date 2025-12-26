@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          meson setup --cross-file ../windows-cross.ini -DSFML_DIR=../libs/SFML-2.6.2 ..
+          meson setup --cross-file ../windows-cross.ini ..
 
       # 4. Build the game
       - name: Build
