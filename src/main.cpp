@@ -17,13 +17,12 @@
 int main() // main function, where the flow of the game starts
 {
     #ifdef _WIN32
-        // Change working directory to project root (assumes executable is in build/)
-        fs::path exePath = fs::current_path();      // e.g., build/
-        fs::path projectRoot = exePath.parent_path(); // go up one level to project root
-        fs::current_path(projectRoot);
+    std::filesystem::path exePath = std::filesystem::current_path();
+    std::filesystem::path projectRoot = exePath.parent_path();
+    std::filesystem::current_path(projectRoot);
 
-        std::cout << "Windows working directory set to project root: " 
-                  << fs::current_path() << "\n";
+    std::cout << "Windows working directory set to project root: " 
+              << std::filesystem::current_path() << "\n";
     #endif
 
     std::srand(static_cast<unsigned>(std::time(nullptr))); // seed random number generator
