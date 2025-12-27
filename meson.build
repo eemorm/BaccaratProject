@@ -4,7 +4,6 @@ cxx = meson.get_compiler('cpp')
 
 # ---- Detect host OS ----
 if host_machine.system() == 'darwin'
-  # macOS (Homebrew SFML)
   sfml_inc = include_directories('/opt/homebrew/Cellar/sfml@2/2.6.2_1/include')
   sfml_lib_dir = '/opt/homebrew/Cellar/sfml@2/2.6.2_1/lib'
 
@@ -17,34 +16,26 @@ if host_machine.system() == 'darwin'
   sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
 
 elif host_machine.system() == 'windows'
-  # Windows (SFML inside project)
   sfml_inc = include_directories('libs/SFML/include')
+  sfml_lib_dir = 'libs/SFML/lib'
 
-  windows_libs = [
-    'libs/SFML/lib/libsfml-graphics-s.a',
-    'libs/SFML/lib/libsfml-window-s.a',
-    'libs/SFML/lib/libsfml-system-s.a',
-    'libs/SFML/lib/libsfml-network-s.a',
-    'libs/SFML/lib/libsfml-audio-s.a',
-  ]
+  # GCC/MinGW expects just the base name (without lib/ prefix or extension)
+  sfml_graphics = cxx.find_library('sfml-graphics-s', dirs: sfml_lib_dir)
+  sfml_window   = cxx.find_library('sfml-window-s',   dirs: sfml_lib_dir)
+  sfml_system   = cxx.find_library('sfml-system-s',   dirs: sfml_lib_dir)
+  sfml_network  = cxx.find_library('sfml-network-s',  dirs: sfml_lib_dir)
+  sfml_audio    = cxx.find_library('sfml-audio-s',    dirs: sfml_lib_dir)
+
+  sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
 endif
 
 # ---- Sources ----
 sources = files('src/main.cpp')
 
 # ---- Executable ----
-if host_machine.system() == 'darwin'
-  executable(
-    'BaccaratProject',
-    sources,
-    include_directories: sfml_inc,
-    dependencies: sfml_deps
-  )
-elif host_machine.system() == 'windows'
-  executable(
-    'BaccaratProject',
-    sources,
-    include_directories: sfml_inc,
-    link_args: windows_libs
-  )
-endif
+executable(
+  'BaccaratProject',
+  sources,
+  include_directories: sfml_inc,
+  dependencies: sfml_deps   # ✅ Use dependencies here, NOT link_with
+)
