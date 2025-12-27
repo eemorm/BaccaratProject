@@ -55,7 +55,7 @@ jobs:
       - name: Copy SFML DLLs
         shell: msys2 {0}
         run: |
-          cp libs/SFML/bin/*.dll build/install/bin/
+          cp /d/a/BaccaratProject/BaccaratProject/libs/SFML/bin/*.dll build/install/bin/
 
       # 8. Upload the full portable install folder
       - name: Upload EXE + Resources + DLLs

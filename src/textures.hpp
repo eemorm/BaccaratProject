@@ -1,8 +1,5 @@
 #pragma once
 
-// Custom Includes
-#include "textures.hpp"
-
 // SFML
 #include <SFML/Graphics.hpp>
 
@@ -28,12 +25,14 @@ sf::Texture tableTexture;
 sf::Texture theDealerBackgroundTexture;
 sf::Texture theDealerNumbersTexture;
 sf::Texture theDealerSuitsTexture;
+sf::Texture theDealerTexture;
 
 // ---SPRITES---
 sf::Sprite table;
 sf::Sprite theDealerBackground;
 std::vector<sf::Sprite> theDealerNumbers;
 std::vector<sf::Sprite> theDealerSuits;
+sf::Sprite theDealer;
 
 // ---SHADERS---
 sf::Shader ditherShader;
@@ -68,12 +67,15 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerSuitsTexture.loadFromFile("textures/Cards/TheDealer/TheDealerSuits.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!theDealerTexture.loadFromFile("textures/Dealers/theDealer.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
 
     // ---SET TEXTURES INTO SPRITES---
     table.setTexture(tableTexture);
     theDealerBackground.setTexture(theDealerBackgroundTexture);
     splitTextures(&theDealerNumbersTexture, 9, &theDealerNumbers, bits);
     splitTextures(&theDealerSuitsTexture, 4, &theDealerSuits, bits);
+    theDealer.setTexture(theDealerTexture);
 
     // ---LOAD SHADERS---
     if (!ditherShader.loadFromFile("shaders/dither.frag", sf::Shader::Fragment))

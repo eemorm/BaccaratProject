@@ -123,6 +123,11 @@ class BaccaratState : public GameState
             table.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
             table.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 190);
 
+            theDealer.setScale(0.3f, 0.3f);
+            sf::Vector2u texSize2 = theDealer.getTexture()->getSize();
+            theDealer.setOrigin(texSize2.x / 2.f, texSize2.y / 2.f);
+            theDealer.setPosition(SCREEN_WIDTH / 2 - 40, SCREEN_HEIGHT / 2 - 125);
+
             //---INITIALIZE BET ZONES---
             bankerBetZone = { 499.f, 532.f, 103.f, 85.f };
             tieBetZone = { 617.f, 563.f, 159.f, 54.f };
@@ -280,6 +285,7 @@ class BaccaratState : public GameState
             pixelationShader.setUniform("pixelSize", 4.f);
 
             //---RENDER WORLD---
+            worldRT.draw(theDealer);
             worldRT.draw(table); // draw table at first z-layer
             worldRT.draw(deck); // draw deck on top of table
 
