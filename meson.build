@@ -19,20 +19,18 @@ if host_machine.system() == 'darwin'
   sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
 
 elif host_machine.system() == 'windows'
-  # Include path for SFML headers
   sfml_inc = include_directories('libs/SFML/include')
+  sfml_lib_dir = meson.source_root() / 'libs/SFML/lib'
 
-  # Prebuilt static libraries (use full relative paths)
-  sfml_graphics = 'libs/SFML/lib/libsfml-graphics-s.a'
-  sfml_window   = 'libs/SFML/lib/libsfml-window-s.a'
-  sfml_system   = 'libs/SFML/lib/libsfml-system-s.a'
-  sfml_network  = 'libs/SFML/lib/libsfml-network-s.a'
-  sfml_audio    = 'libs/SFML/lib/libsfml-audio-s.a'
+  sfml_graphics = cxx.find_library('sfml-graphics-s', dirs: sfml_lib_dir)
+  sfml_window   = cxx.find_library('sfml-window-s',   dirs: sfml_lib_dir)
+  sfml_system   = cxx.find_library('sfml-system-s',   dirs: sfml_lib_dir)
+  sfml_network  = cxx.find_library('sfml-network-s',  dirs: sfml_lib_dir)
+  sfml_audio    = cxx.find_library('sfml-audio-s',    dirs: sfml_lib_dir)
 
-  # Tell Meson these are "dependencies"
   sfml_deps = declare_dependency(
     include_directories: sfml_inc,
-    link_with: [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
+    dependencies: [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
   )
 endif
 
