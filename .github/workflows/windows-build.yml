@@ -23,12 +23,16 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-pip
 
       # 3. Install Meson
       - name: Install Meson
         shell: msys2 {0}
         run: |
-          pip install meson
+          python -m pip install --upgrade pip
+          python -m pip install meson
+
 
       # 4. Configure Meson (NO cross file)
       - name: Configure build
