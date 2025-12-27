@@ -11,39 +11,43 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. Checkout your repository
+      # 1. Checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Install MSYS2, Python, Meson, Ninja
-      - name: Install MSYS2 and Meson
-        shell: pwsh
-        run: |
-          choco install --yes msys2
-          choco install --yes python
-          python -m pip install --upgrade pip
-          pip install meson ninja
+      # 2. Install MSYS2 + MinGW
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          install: >
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-pkg-config
 
-      # 3. Configure Meson build
-      - name: Configure build with Meson
-        shell: bash
+      # 3. Install Meson
+      - name: Install Meson
+        shell: msys2 {0}
         run: |
-          setx CC "cl"
-          setx CXX "cl"
-          mkdir -p build
+          pip install meson
+
+      # 4. Configure Meson (NO cross file)
+      - name: Configure build
+        shell: msys2 {0}
+        run: |
+          mkdir build
           cd build
-          meson setup --cross-file ../windows-cross.ini ..
+          meson setup ..
 
-      # 4. Build the game
+      # 5. Build
       - name: Build
-        shell: bash
+        shell: msys2 {0}
         run: |
           cd build
           ninja
 
-      # 5. Upload the compiled Windows EXE as an artifact
+      # 6. Upload EXE
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: Baccarat-Windows
-          path: build/Baccarat.exe
+          path: build/BaccaratProject.exe
