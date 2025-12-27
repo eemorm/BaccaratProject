@@ -1,6 +1,7 @@
 #pragma once
 
 // Custom Includes
+#include "../audio.hpp"
 #include "../Classes/Card.hpp"
 
 // Standard Libraries
@@ -18,7 +19,7 @@ class BaccaratHand
             for (auto& c : cards) sum += c.getValue();
             return sum % 10;
         }
-        void addCard(Card card) { cards.push_back(card); }
+        void addCard(Card card) { cards.push_back(card); playRandom(cardDrawSounds); }
         void clear() { cards.clear(); }
         Card* getThirdCard() { if (cards.size() >= 3) return &cards[2]; return nullptr; }
 };

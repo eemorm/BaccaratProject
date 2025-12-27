@@ -2,6 +2,7 @@
 
 // Custom Includes
 #include "../textures.hpp"
+#include "../audio.hpp"
 #include "Card.hpp"
 
 // SFML
@@ -57,7 +58,7 @@ class Deck : public sf::Drawable
         sf::Vector2f getPosition() { return sprite.getPosition(); }
         void setPosition(sf::Vector2f p) { sprite.setPosition(p); }
         void addCard(Card& card) { deck.push_back(card); }
-        void shuffleDeck() { std::shuffle(deck.begin(), deck.end(), rng); }
+        void shuffleDeck() { std::shuffle(deck.begin(), deck.end(), rng); playRandom(shuffleSounds); }
         void clearDeck() { deck.clear(); }
         Card drawCardFromDeck() 
         {

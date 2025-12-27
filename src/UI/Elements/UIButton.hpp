@@ -1,6 +1,7 @@
 #pragma once
 
 // Custom Includes
+#include "../../audio.hpp"
 #include "../UIElement.hpp"
 
 // SFML

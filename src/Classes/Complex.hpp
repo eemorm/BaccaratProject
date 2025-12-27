@@ -1,6 +1,7 @@
 #pragma once
 
 // Custom Includes
+#include "../audio.hpp"
 #include "Enemy.hpp"
 #include "EnemyDatabase.hpp"
 
@@ -61,5 +62,5 @@ class Complex
                 currentEnemies.push_back(std::move(enemy));
             }
         }
-        void nextFloor() { floor += 1; spawnEnemiesForFloor(); }
+        void nextFloor() { floor += 1; spawnEnemiesForFloor(); stopAllMusic(); playRandom(baccarat1); }
 };
