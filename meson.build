@@ -2,8 +2,12 @@ project('BaccaratProject', 'cpp', default_options: ['cpp_std=c++17'])
 
 cxx = meson.get_compiler('cpp')
 
+# ---- Sources ----
+sources = files('src/main.cpp')
+
 # ---- Detect host OS ----
 if host_machine.system() == 'darwin'
+  # macOS (Homebrew SFML)
   sfml_inc = include_directories('/opt/homebrew/Cellar/sfml@2/2.6.2_1/include')
   sfml_lib_dir = '/opt/homebrew/Cellar/sfml@2/2.6.2_1/lib'
 
@@ -16,25 +20,47 @@ if host_machine.system() == 'darwin'
   sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
 
 elif host_machine.system() == 'windows'
-  sfml_inc = include_directories(join_paths(meson.source_root(), 'libs', 'SFML', 'include'))
-  sfml_lib_dir = join_paths(meson.source_root(), 'libs', 'SFML', 'lib')
+  # Windows (SFML inside project)
+  sfml_inc = include_directories('libs/SFML/include')
 
-  sfml_graphics = cxx.find_library('sfml-graphics-s', dirs: sfml_lib_dir)
-  sfml_window   = cxx.find_library('sfml-window-s',   dirs: sfml_lib_dir)
-  sfml_system   = cxx.find_library('sfml-system-s',   dirs: sfml_lib_dir)
-  sfml_network  = cxx.find_library('sfml-network-s',  dirs: sfml_lib_dir)
-  sfml_audio    = cxx.find_library('sfml-audio-s',    dirs: sfml_lib_dir)
+  # Wrap each prebuilt .a library as a Meson static target
+  sfml_graphics = static_library(
+    'sfml-graphics',
+    'libs/SFML/lib/libsfml-graphics-s.a',
+    include_directories: sfml_inc
+  )
+  sfml_window = static_library(
+    'sfml-window',
+    'libs/SFML/lib/libsfml-window-s.a',
+    include_directories: sfml_inc
+  )
+  sfml_system = static_library(
+    'sfml-system',
+    'libs/SFML/lib/libsfml-system-s.a',
+    include_directories: sfml_inc
+  )
+  sfml_network = static_library(
+    'sfml-network',
+    'libs/SFML/lib/libsfml-network-s.a',
+    include_directories: sfml_inc
+  )
+  sfml_audio = static_library(
+    'sfml-audio',
+    'libs/SFML/lib/libsfml-audio-s.a',
+    include_directories: sfml_inc
+  )
 
-  sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
+  # Combine all SFML libs into a dependency object
+  sfml_deps = declare_dependency(
+    include_directories: sfml_inc,
+    link_with: [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
+  )
 endif
 
-# ---- Sources ----
-sources = files('src/main.cpp')
-
-# ---- Executable ----
+# ---- Build Executable ----
 executable(
   'BaccaratProject',
   sources,
   include_directories: sfml_inc,
-  dependencies: sfml_deps   # ✅ Use dependencies here, NOT link_with
+  dependencies: sfml_deps
 )
