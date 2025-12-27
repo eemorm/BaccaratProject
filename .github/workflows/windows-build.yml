@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          meson setup .. --prefix=install
+          meson setup .. --prefix=$PWD/build/install
 
       # 5. Build
       - name: Build
