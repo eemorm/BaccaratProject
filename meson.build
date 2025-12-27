@@ -16,7 +16,10 @@ if host_machine.system() == 'darwin'
   sfml_network  = cxx.find_library('sfml-network',  dirs: sfml_lib_dir)
   sfml_audio    = cxx.find_library('sfml-audio',    dirs: sfml_lib_dir)
 
-  sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
+  sfml_deps = declare_dependency(
+    include_directories: sfml_inc,
+    dependencies: [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
+  )
 
 elif host_machine.system() == 'windows'
   sfml_inc = include_directories('libs/SFML/include')
