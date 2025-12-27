@@ -41,5 +41,16 @@ endif
 executable(
   'BaccaratProject',
   sources,
-  dependencies: sfml_deps
+  dependencies: sfml_deps,
+  install: true
 )
+
+install_subdir('textures', install_dir: get_option('prefix') / 'textures')
+install_subdir('audio',    install_dir: get_option('prefix') / 'audio')
+install_subdir('fonts',    install_dir: get_option('prefix') / 'fonts')
+install_subdir('shaders',  install_dir: get_option('prefix') / 'shaders')
+
+# Install DLLs (SFML) for Windows
+if host_machine.system() == 'windows'
+  install_data('libs/SFML/bin/*.dll', install_dir: get_option('prefix') / 'bin')
+endif

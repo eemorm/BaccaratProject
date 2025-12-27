@@ -33,31 +33,33 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install meson
 
-      # 4. Configure Meson
+      # 4. Configure Meson with portable install
       - name: Configure build
         shell: msys2 {0}
         run: |
           mkdir build
           cd build
-          meson setup ..
+          meson setup .. --prefix=install
 
       # 5. Build
       - name: Build
         shell: msys2 {0}
-        run: |
-          cd build
-          ninja
+        run: meson compile -C build
 
-      # 6. Copy DLLs
+      # 6. Install to portable folder
+      - name: Install
+        shell: msys2 {0}
+        run: meson install -C build
+
+      # 7. Copy SFML DLLs to bin
       - name: Copy SFML DLLs
         shell: msys2 {0}
         run: |
-          cd build
-          cp ../libs/SFML/bin/*.dll .
+          cp libs/SFML/bin/*.dll build/install/bin/
 
-      # 7. Upload EXE + DLLs
-      - name: Upload EXE and DLLs
+      # 8. Upload the full portable install folder
+      - name: Upload EXE + Resources + DLLs
         uses: actions/upload-artifact@v4
         with:
           name: Baccarat-Windows
-          path: build\*
+          path: build/install/*

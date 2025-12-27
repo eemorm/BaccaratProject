@@ -20,18 +20,16 @@
 
 int main() // main function, where the flow of the game starts
 {
+    std::filesystem::path exePath = std::filesystem::current_path();
+
     #ifdef _WIN32
-
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(NULL, buffer, MAX_PATH);
-    std::filesystem::path exePath(buffer);
-
-    std::filesystem::path projectRoot = exePath.parent_path().parent_path(); 
-
-    std::filesystem::current_path(projectRoot);
-    std::cout << "Windows working directory set to project root: " 
-              << std::filesystem::current_path() << "\n";
+        char buffer[MAX_PATH];
+        GetModuleFileNameA(NULL, buffer, MAX_PATH);
+        exePath = std::filesystem::path(buffer).parent_path().parent_path();
     #endif
+
+    std::filesystem::current_path(exePath);
+    std::cout << "Working directory set to: " << std::filesystem::current_path() << "\n";
 
     std::srand(static_cast<unsigned>(std::time(nullptr))); // seed random number generator
 
