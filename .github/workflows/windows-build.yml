@@ -53,7 +53,7 @@ jobs:
         shell: msys2 {0}
         run: |
           cd build
-          cp ../libs/*.dll .
+          cp ../libs/SFML/bin/*.dll .
 
       # 7. Upload EXE + DLLs
       - name: Upload EXE and DLLs
