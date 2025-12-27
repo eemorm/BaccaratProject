@@ -14,13 +14,21 @@
 #include <cstdlib>
 #include <filesystem>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 int main() // main function, where the flow of the game starts
 {
     #ifdef _WIN32
-    std::filesystem::path exePath = std::filesystem::current_path();
-    std::filesystem::path projectRoot = exePath.parent_path();
-    std::filesystem::current_path(projectRoot);
 
+    char buffer[MAX_PATH];
+    GetModuleFileNameA(NULL, buffer, MAX_PATH);
+    std::filesystem::path exePath(buffer);
+
+    std::filesystem::path projectRoot = exePath.parent_path().parent_path(); 
+
+    std::filesystem::current_path(projectRoot);
     std::cout << "Windows working directory set to project root: " 
               << std::filesystem::current_path() << "\n";
     #endif
