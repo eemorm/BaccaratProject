@@ -33,8 +33,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install meson
 
-
-      # 4. Configure Meson (NO cross file)
+      # 4. Configure Meson
       - name: Configure build
         shell: msys2 {0}
         run: |
@@ -49,9 +48,16 @@ jobs:
           cd build
           ninja
 
-      # 6. Upload EXE
-      - name: Upload EXE
+      # 6. Copy DLLs
+      - name: Copy SFML DLLs
+        shell: msys2 {0}
+        run: |
+          cd build
+          copy ..\libs\*.dll .
+
+      # 7. Upload EXE + DLLs
+      - name: Upload EXE and DLLs
         uses: actions/upload-artifact@v4
         with:
           name: Baccarat-Windows
-          path: build/BaccaratProject.exe
+          path: build\*

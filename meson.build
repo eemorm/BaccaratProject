@@ -22,11 +22,11 @@ elif host_machine.system() == 'windows'
   sfml_inc = include_directories('libs/SFML/include')
   sfml_lib_dir = meson.source_root() / 'libs/SFML/lib'
 
-  sfml_graphics = cxx.find_library('sfml-graphics-s', dirs: sfml_lib_dir)
-  sfml_window   = cxx.find_library('sfml-window-s',   dirs: sfml_lib_dir)
-  sfml_system   = cxx.find_library('sfml-system-s',   dirs: sfml_lib_dir)
-  sfml_network  = cxx.find_library('sfml-network-s',  dirs: sfml_lib_dir)
-  sfml_audio    = cxx.find_library('sfml-audio-s',    dirs: sfml_lib_dir)
+  sfml_graphics = cxx.find_library('sfml-graphics', dirs: sfml_lib_dir)
+  sfml_window   = cxx.find_library('sfml-window',   dirs: sfml_lib_dir)
+  sfml_system   = cxx.find_library('sfml-system',   dirs: sfml_lib_dir)
+  sfml_network  = cxx.find_library('sfml-network',  dirs: sfml_lib_dir)
+  sfml_audio    = cxx.find_library('sfml-audio',    dirs: sfml_lib_dir)
 
   sfml_deps = declare_dependency(
     include_directories: sfml_inc,
