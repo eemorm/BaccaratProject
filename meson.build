@@ -16,10 +16,9 @@ if host_machine.system() == 'darwin'
   sfml_deps = [sfml_graphics, sfml_window, sfml_system, sfml_network, sfml_audio]
 
 elif host_machine.system() == 'windows'
-  sfml_inc = include_directories('libs/SFML/include')
-  sfml_lib_dir = 'libs/SFML/lib'
+  sfml_inc = include_directories(join_paths(meson.source_root(), 'libs', 'SFML', 'include'))
+  sfml_lib_dir = join_paths(meson.source_root(), 'libs', 'SFML', 'lib')
 
-  # GCC/MinGW expects just the base name (without lib/ prefix or extension)
   sfml_graphics = cxx.find_library('sfml-graphics-s', dirs: sfml_lib_dir)
   sfml_window   = cxx.find_library('sfml-window-s',   dirs: sfml_lib_dir)
   sfml_system   = cxx.find_library('sfml-system-s',   dirs: sfml_lib_dir)
