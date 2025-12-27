@@ -21,11 +21,11 @@ elif host_machine.system() == 'windows'
   sfml_inc = include_directories('libs/SFML/include')
 
   windows_libs = [
-    'libs/SFML/lib/sfml-graphics-s.lib',
-    'libs/SFML/lib/sfml-window-s.lib',
-    'libs/SFML/lib/sfml-system-s.lib',
-    'libs/SFML/lib/sfml-network-s.lib',
-    'libs/SFML/lib/sfml-audio-s.lib',
+    'libs/SFML/lib/libsfml-graphics-s.a',
+    'libs/SFML/lib/libsfml-window-s.a',
+    'libs/SFML/lib/libsfml-system-s.a',
+    'libs/SFML/lib/libsfml-network-s.a',
+    'libs/SFML/lib/libsfml-audio-s.a',
   ]
 endif
 
