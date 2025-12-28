@@ -53,15 +53,15 @@ jobs:
       - name: Copy DLLs
         shell: msys2 {0}
         run: |
-          mkdir -p build/install/bin
+          mkdir -p build/install/
 
           # MinGW runtime
-          cp /mingw64/bin/libstdc++-6.dll build/install/bin/
-          cp /mingw64/bin/libgcc_s_seh-1.dll build/install/bin/
-          cp /mingw64/bin/libwinpthread-1.dll build/install/bin/
+          cp /mingw64/bin/libstdc++-6.dll build/install/
+          cp /mingw64/bin/libgcc_s_seh-1.dll build/install/
+          cp /mingw64/bin/libwinpthread-1.dll build/install/
 
           # SFML
-          cp libs/SFML/bin/*.dll build/install/bin/
+          cp libs/SFML/bin/*.dll build/install/
 
       # 8. Upload portable folder
       - name: Upload EXE + Assets + DLLs
