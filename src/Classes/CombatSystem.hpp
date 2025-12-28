@@ -59,7 +59,7 @@ class CombatSystem
 
             for (auto& enemy : complex->getCurrentEnemies())
             {
-                if (enemy->getBody().getGlobalBounds().contains(mousePos))
+                if (enemy->getBody().getGlobalBounds().contains(mousePos) && player->getPlayerInventory().getAttacks() > 0)
                 {
                     playerAttack(*enemy);
                     state = CombatState::EnemyTurn;

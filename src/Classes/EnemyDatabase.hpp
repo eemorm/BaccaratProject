@@ -5,7 +5,7 @@
 
 namespace EnemyDB
 {
-    inline EnemyData Rat 
+    inline EnemyData Rat
     {
         .name = "Rat",
         .maxHealth = 20,
