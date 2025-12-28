@@ -17,14 +17,10 @@ jobs:
 
       # 1a. Read version number (PowerShell)
       - name: Read version
-        id: get_version
         shell: pwsh
         run: |
-          $version = Get-Content version.txt
-          Write-Host "VERSION=$version" >> $env:GITHUB_ENV
-
-      - name: Print version
-        run: echo "Version is ${{ env.VERSION }}"
+          $version = (Get-Content version.txt -Raw).Trim()
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       # 2. Install MSYS2 + MinGW
       - name: Setup MSYS2
