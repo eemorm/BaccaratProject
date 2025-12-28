@@ -33,13 +33,20 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install meson
 
+      - name: Copy MinGW runtime DLLs
+        shell: msys2 {0}
+        run: |
+          cp /mingw64/bin/libstdc++-6.dll build/install/bin/
+          cp /mingw64/bin/libgcc_s_seh-1.dll build/install/bin/
+          cp /mingw64/bin/libwinpthread-1.dll build/install/bin/
+
       # 4. Configure Meson with portable install
       - name: Configure build
         shell: msys2 {0}
         run: |
           mkdir build
           cd build
-          meson setup .. --prefix=$PWD/build/install
+          meson setup .. --prefix=$PWD/install
 
       # 5. Build
       - name: Build
@@ -55,7 +62,7 @@ jobs:
       - name: Copy SFML DLLs
         shell: msys2 {0}
         run: |
-          cp /d/a/BaccaratProject/BaccaratProject/libs/SFML/bin/*.dll build/install/bin/
+          cp /d/a/BaccaratProject/BaccaratProject/libs/SFML/bin/*.dll install/bin/
 
       # 8. Upload the full portable install folder
       - name: Upload EXE + Resources + DLLs

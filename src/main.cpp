@@ -14,23 +14,8 @@
 #include <cstdlib>
 #include <filesystem>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 int main() // main function, where the flow of the game starts
 {
-    std::filesystem::path exePath = std::filesystem::current_path();
-
-    #ifdef _WIN32
-        char buffer[MAX_PATH];
-        GetModuleFileNameA(NULL, buffer, MAX_PATH);
-        exePath = std::filesystem::path(buffer).parent_path().parent_path();
-    #endif
-
-    std::filesystem::current_path(exePath);
-    std::cout << "Working directory set to: " << std::filesystem::current_path() << "\n";
-
     std::srand(static_cast<unsigned>(std::time(nullptr))); // seed random number generator
 
     loadTextures(); // load game textures
