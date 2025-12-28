@@ -30,7 +30,7 @@ class BaccaratUI : public sf::Drawable
         sf::Text payoutText;
         UIButton& confirmBetButton;
         UIButton& restartGameButton;
-        //UIBar& healthBar;
+        UIBar& healthBar;
     
         BaccaratUI() : confirmBetButton(ui.add<UIButton>
             (
@@ -50,8 +50,8 @@ class BaccaratUI : public sf::Drawable
                 [&]() {
                     
                 }
-            ))
-            //healthBar(ui.add<UIBar>(sf::Vector2f(20, 85), sf::Vector2f(150, 25), 100.f, sf::Color::Green))
+            )),
+            healthBar(ui.add<UIBar>(sf::Vector2f(20, 85), sf::Vector2f(150, 25), 100.f, sf::Color::Green))
         {
             cursorText.setFont(font);
             cursorText.setCharacterSize(24);

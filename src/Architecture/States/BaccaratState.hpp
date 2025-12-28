@@ -271,6 +271,7 @@ class BaccaratState : public GameState
             ui.moneyText.setString("Bet: $" + std::to_string(game.getBetAmount()) + "\nWealth: $" + std::to_string(chipWealthManager.getWealth()));
             ui.attacksText.setString("Attacks: " + std::to_string(inventory.getAttacks()));
             ui.winText.setString(game.resultToString());
+            ui.healthBar.updateBar(playerCombat.getCurrentHealth());
         }
         // draws everything to the screen
         inline void draw(sf::RenderWindow& window) override
@@ -340,8 +341,6 @@ class BaccaratState : public GameState
 
         void restartGame()
         {
-            deck.shuffleDeck();
-
             roundOver = false;
 
             bankerBetZone = originalBankerBetZone;
