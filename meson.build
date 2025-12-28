@@ -48,10 +48,10 @@ executable(
 )
 
 # ---- Assets ----
-install_subdir('textures', install_dir: get_option('prefix') / 'textures')
-install_subdir('audio',    install_dir: get_option('prefix') / 'audio')
-install_subdir('fonts',    install_dir: get_option('prefix') / 'fonts')
-install_subdir('shaders',  install_dir: get_option('prefix') / 'shaders')
+install_subdir('textures', install_dir: get_option('prefix'))
+install_subdir('audio',    install_dir: get_option('prefix'))
+install_subdir('fonts',    install_dir: get_option('prefix'))
+install_subdir('shaders',  install_dir: get_option('prefix'))
 
 # ---- SFML DLLs for Windows ----
 if host_machine.system() == 'windows'

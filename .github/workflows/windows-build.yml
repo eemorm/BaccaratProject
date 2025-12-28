@@ -23,6 +23,9 @@ jobs:
           $version = Get-Content version.txt
           Write-Host "VERSION=$version" >> $env:GITHUB_ENV
 
+      - name: Print version
+        run: echo "Version is ${{ env.VERSION }}"
+
       # 2. Install MSYS2 + MinGW
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
