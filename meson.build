@@ -52,5 +52,12 @@ install_subdir('shaders',  install_dir: get_option('prefix') / 'shaders')
 
 # Install DLLs (SFML) for Windows
 if host_machine.system() == 'windows'
-  install_data('libs/SFML/bin/*.dll', install_dir: get_option('prefix') / 'bin')
+  sfml_dlls = files(
+    'libs/SFML/bin/sfml-graphics-2.dll',
+    'libs/SFML/bin/sfml-window-2.dll',
+    'libs/SFML/bin/sfml-system-2.dll',
+    'libs/SFML/bin/sfml-network-2.dll',
+    'libs/SFML/bin/sfml-audio-2.dll'
+  )
+  install_data(sfml_dlls, install_dir: get_option('prefix') / 'bin')
 endif
