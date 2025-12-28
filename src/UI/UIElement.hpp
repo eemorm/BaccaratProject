@@ -10,5 +10,5 @@ class UIElement : public sf::Drawable
 
         virtual void handleEvent(sf::Event& e, sf::Vector2f& mouse) {}
         virtual void update(float dt) {}
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override {}
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override {}
 };
