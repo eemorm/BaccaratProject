@@ -1,0 +1,113 @@
+name: Build Baccarat (Linux + macOS)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # =====================
+    # Linux dependencies
+    # =====================
+    - name: Install deps (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt update
+        sudo apt install -y meson ninja-build libsfml-dev
+
+    # =====================
+    # macOS dependencies
+    # =====================
+    - name: Install deps (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew update
+        brew install sfml meson ninja
+
+    # =====================
+    # Configure + Build
+    # =====================
+    - name: Configure
+      run: meson setup build --buildtype=release
+
+    - name: Build
+      run: ninja -C build
+
+    # =====================
+    # Linux packaging
+    # =====================
+    - name: Package Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        mkdir -p dist/linux
+        cp build/baccarat dist/linux/
+        cp -r assets fonts audio dist/linux/
+
+    - name: Upload Linux artifact
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Baccarat-Linux
+        path: dist/linux
+
+    # =====================
+    # macOS packaging (.app)
+    # =====================
+    - name: Package macOS app
+      if: matrix.os == 'macos-latest'
+      run: |
+        APP=Baccarat.app
+
+        mkdir -p $APP/Contents/{MacOS,Frameworks}
+
+        # Executable
+        cp build/baccarat $APP/Contents/MacOS/
+
+        # Assets next to executable
+        cp -r assets fonts audio $APP/Contents/MacOS/
+
+        # SFML dylibs
+        cp /opt/homebrew/lib/libsfml-*.dylib $APP/Contents/Frameworks/
+
+        # Fix dylib lookup path
+        install_name_tool -add_rpath \
+          @executable_path/../Frameworks \
+          $APP/Contents/MacOS/baccarat
+
+    - name: Create Info.plist
+      if: matrix.os == 'macos-latest'
+      run: |
+        cat > Baccarat.app/Contents/Info.plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleExecutable</key>
+  <string>baccarat</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.yourname.baccarat</string>
+  <key>CFBundleName</key>
+  <string>Baccarat</string>
+  <key>CFBundleVersion</key>
+  <string>1.0</string>
+</dict>
+</plist>
+EOF
+
+    - name: Upload macOS artifact
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Baccarat-macOS
+        path: Baccarat.app
