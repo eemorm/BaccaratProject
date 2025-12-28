@@ -33,39 +33,38 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install meson
 
-      - name: Copy MinGW runtime DLLs
-        shell: msys2 {0}
-        run: |
-          cp /mingw64/bin/libstdc++-6.dll install/bin/
-          cp /mingw64/bin/libgcc_s_seh-1.dll install/bin/
-          cp /mingw64/bin/libwinpthread-1.dll install/bin/
-
-      # 4. Configure Meson with portable install
+      # 4. Configure Meson (portable install)
       - name: Configure build
         shell: msys2 {0}
         run: |
-          mkdir build
-          cd build
-          meson setup .. --prefix=$PWD/install
+          meson setup build --prefix=$PWD/build/install
 
       # 5. Build
       - name: Build
         shell: msys2 {0}
         run: meson compile -C build
 
-      # 6. Install to portable folder
+      # 6. Install
       - name: Install
         shell: msys2 {0}
         run: meson install -C build
 
-      # 7. Copy SFML DLLs to bin
-      - name: Copy SFML DLLs
+      # 7. Copy runtime + SFML DLLs
+      - name: Copy DLLs
         shell: msys2 {0}
         run: |
-          cp /d/a/BaccaratProject/BaccaratProject/libs/SFML/bin/*.dll install/bin/
+          mkdir -p build/install/bin
 
-      # 8. Upload the full portable install folder
-      - name: Upload EXE + Resources + DLLs
+          # MinGW runtime
+          cp /mingw64/bin/libstdc++-6.dll build/install/bin/
+          cp /mingw64/bin/libgcc_s_seh-1.dll build/install/bin/
+          cp /mingw64/bin/libwinpthread-1.dll build/install/bin/
+
+          # SFML
+          cp libs/SFML/bin/*.dll build/install/bin/
+
+      # 8. Upload portable folder
+      - name: Upload EXE + Assets + DLLs
         uses: actions/upload-artifact@v4
         with:
           name: Baccarat-Windows
