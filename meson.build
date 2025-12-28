@@ -43,7 +43,8 @@ executable(
   'BaccaratProject',
   sources,
   dependencies: sfml_deps,
-  install: true
+  install: true,
+  install_dir: get_option('prefix')
 )
 
 # ---- Assets ----

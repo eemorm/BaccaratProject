@@ -15,6 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 1a. Read version number
+      - name: Read version
+        id: get_version
+        run: |
+          VERSION=$(cat version.txt)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       # 2. Install MSYS2 + MinGW
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
@@ -63,9 +70,9 @@ jobs:
           # SFML
           cp libs/SFML/bin/*.dll build/install/
 
-      # 8. Upload portable folder
+      # 8. Upload portable folder with version
       - name: Upload EXE + Assets + DLLs
         uses: actions/upload-artifact@v4
         with:
-          name: BaccaratProject-Windows
+          name: BaccaratProject-Windows-${{ env.VERSION }}
           path: build/install/*
