@@ -38,6 +38,7 @@ elif host_machine.system() == 'windows'
 endif
 
 # ---- Executable ----
+# Install EXE directly to prefix (root install folder)
 executable(
   'BaccaratProject',
   sources,
@@ -45,12 +46,13 @@ executable(
   install: true
 )
 
+# ---- Assets ----
 install_subdir('textures', install_dir: get_option('prefix') / 'textures')
 install_subdir('audio',    install_dir: get_option('prefix') / 'audio')
 install_subdir('fonts',    install_dir: get_option('prefix') / 'fonts')
 install_subdir('shaders',  install_dir: get_option('prefix') / 'shaders')
 
-# Install DLLs (SFML) for Windows
+# ---- SFML DLLs for Windows ----
 if host_machine.system() == 'windows'
   sfml_dlls = files(
     'libs/SFML/bin/sfml-graphics-2.dll',
@@ -59,5 +61,5 @@ if host_machine.system() == 'windows'
     'libs/SFML/bin/sfml-network-2.dll',
     'libs/SFML/bin/sfml-audio-2.dll'
   )
-  install_data(sfml_dlls, install_dir: get_option('prefix') / 'bin')
+  install_data(sfml_dlls, install_dir: get_option('prefix'))  # Root, not bin
 endif

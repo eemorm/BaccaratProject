@@ -67,5 +67,5 @@ jobs:
       - name: Upload EXE + Assets + DLLs
         uses: actions/upload-artifact@v4
         with:
-          name: Baccarat-Windows
+          name: BaccaratProject-Windows
           path: build/install/*
