@@ -17,6 +17,7 @@
 #include "../../Classes/CombatSystem.hpp"
 #include "../../Classes/LightSystem.hpp"
 #include "../../UI/StateUI/BaccaratUI.hpp"
+#include "../../UI/Elements/UIBar.hpp"
 #include "../../audio.hpp"
 
 // SFML
@@ -82,6 +83,7 @@ class BaccaratState : public GameState
 
         //---UI---
         BaccaratUI ui;
+        UIBar bar;
 
         //---MISC---
         sf::Vector2f mousePos; // mouse position
@@ -93,9 +95,10 @@ class BaccaratState : public GameState
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
             game(deck),
             shop(&inventory, &chipWealthManager),
-            playerCombat(&inventory, 100),
+            playerCombat(&inventory, 100.f),
             combatSystem(&complex, &playerCombat),
-            ui(game)
+            ui(game),
+            bar({200, 600}, {200, 50}, playerCombat.getMaxHealth())
         { 
             //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -261,6 +264,7 @@ class BaccaratState : public GameState
             }
 
             combatSystem.update();
+            bar.update(dt, playerCombat.getCurrentHealth());
 
             //---UPDATE TEXT---
             ui.cursorText.setString(
@@ -335,6 +339,7 @@ class BaccaratState : public GameState
 
             if (!shop.getShopOpen())
                 window.draw(ui); // draw UI on top of everything else
+            window.draw(bar);
             window.draw(shop);
         }
 

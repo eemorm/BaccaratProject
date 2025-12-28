@@ -7,10 +7,11 @@
 #include <SFML/Graphics.hpp>
 
 // Standard Libraries
+#include <algorithm>
 #include <functional>
 #include <string>
 
-class HealthBar : public UIElement 
+class UIBar : public UIElement 
 {
     private:
         float value;
@@ -19,10 +20,9 @@ class HealthBar : public UIElement
         sf::RectangleShape bar;
         sf::Vector2f fullSize;
     public:
-        HealthBar(sf::Vector2f position, sf::Vector2f size, float max)
-            : maxValue(max), currentValue(max)
+        UIBar(sf::Vector2f position, sf::Vector2f size, float max) : value(max), maxValue(max)
         {
-            size = size
+            fullSize = size;
             background.setSize(size);
             background.setFillColor(sf::Color(50, 50, 50));
             background.setPosition(position);
@@ -32,10 +32,14 @@ class HealthBar : public UIElement
             bar.setPosition(position);
         }
         void handleEvent(sf::Event& e, sf::Vector2f& mouse) override {}
-        void update(float dt, float currentValue) override 
+        void update(float dt, float currentValue)
         {
-            value = currentValue;
-            background.setSize({(value/maxValue) * fullSize.x, fullSize.y});
+            value = std::max(currentValue, 0.f);
+            bar.setSize({(value/maxValue) * fullSize.x, fullSize.y});
         }
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const override {}
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
+        {
+            target.draw(background);
+            target.draw(bar);
+        }
 };
