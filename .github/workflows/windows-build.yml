@@ -15,12 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 1a. Read version number
+      # 1a. Read version number (PowerShell)
       - name: Read version
         id: get_version
+        shell: pwsh
         run: |
-          VERSION=$(cat version.txt)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          $version = Get-Content version.txt
+          Write-Host "VERSION=$version" >> $env:GITHUB_ENV
 
       # 2. Install MSYS2 + MinGW
       - name: Setup MSYS2
