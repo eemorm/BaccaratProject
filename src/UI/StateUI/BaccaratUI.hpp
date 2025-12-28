@@ -4,13 +4,13 @@
 #include "../../textures.hpp"
 #include "../UIManager.hpp"
 #include "../Elements/UIButton.hpp"
+#include "../Elements/UIBar.hpp"
 #include "../../Baccarat/BaccaratGame.hpp"
 
 class BaccaratUI : public sf::Drawable
 {
     private:
         UIManager ui;
-        BaccaratGame& game;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         { 
@@ -30,19 +30,16 @@ class BaccaratUI : public sf::Drawable
         sf::Text payoutText;
         UIButton& confirmBetButton;
         UIButton& restartGameButton;
+        //UIBar& healthBar;
     
-        BaccaratUI(BaccaratGame& g) : game(g), confirmBetButton(ui.add<UIButton>
+        BaccaratUI() : confirmBetButton(ui.add<UIButton>
             (
                 sf::Vector2f(1146, 75),
                 sf::Vector2f(200, 50),
                 "Confirm Bet",
                 font,
                 [&]() {
-                    if (game.getGamePhase() == BaccaratPhase::Betting && game.getBetAmount() > 0)
-                    {
-                        game.closeBetting();
-                        confirmBetButton.setActive(false);
-                    }
+                    
                 }
             )),
             restartGameButton(ui.add<UIButton>(
@@ -54,6 +51,7 @@ class BaccaratUI : public sf::Drawable
                     
                 }
             ))
+            //healthBar(ui.add<UIBar>(sf::Vector2f(20, 85), sf::Vector2f(150, 25), 100.f, sf::Color::Green))
         {
             cursorText.setFont(font);
             cursorText.setCharacterSize(24);

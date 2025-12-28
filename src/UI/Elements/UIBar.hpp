@@ -20,7 +20,7 @@ class UIBar : public UIElement
         sf::RectangleShape bar;
         sf::Vector2f fullSize;
     public:
-        UIBar(sf::Vector2f position, sf::Vector2f size, float max) : value(max), maxValue(max)
+        UIBar(sf::Vector2f position, sf::Vector2f size, float max, sf::Color color) : value(max), maxValue(max)
         {
             fullSize = size;
             background.setSize(size);
@@ -28,15 +28,15 @@ class UIBar : public UIElement
             background.setPosition(position);
 
             bar.setSize(size);
-            bar.setFillColor(sf::Color::Red);
+            bar.setFillColor(color);
             bar.setPosition(position);
         }
         void handleEvent(sf::Event& e, sf::Vector2f& mouse) override {}
-        void update(float dt, float currentValue)
-        {
-            value = std::max(currentValue, 0.f);
-            bar.setSize({(value/maxValue) * fullSize.x, fullSize.y});
-        }
+        //void update(float dt, float currentValue)
+        //{
+        //    value = std::max(currentValue, 0.f);
+        //    bar.setSize({(value/maxValue) * fullSize.x, fullSize.y});
+        //}
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
         {
             target.draw(background);

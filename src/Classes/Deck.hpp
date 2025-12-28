@@ -22,6 +22,7 @@ class Deck : public sf::Drawable
         sf::Sprite& backside;
 
         std::vector<Card> deck;
+        std::vector<Card> origDeck;
         std::mt19937 rng;
 
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -54,14 +55,21 @@ class Deck : public sf::Drawable
                     deck.push_back(card);
                 }
             }
+            origDeck = deck;
         }
         sf::Vector2f getPosition() { return sprite.getPosition(); }
         void setPosition(sf::Vector2f p) { sprite.setPosition(p); }
         void addCard(Card& card) { deck.push_back(card); }
         void shuffleDeck() { std::shuffle(deck.begin(), deck.end(), rng); playRandom(shuffleSounds); }
         void clearDeck() { deck.clear(); }
-        Card drawCardFromDeck() 
+        void resetDeck() { deck = origDeck; shuffleDeck(); }
+        Card drawCardFromDeck()
         {
+            if (deck.empty())
+            {
+                resetDeck();
+            }
+
             Card c = deck.back();
             deck.pop_back();
             return c;
