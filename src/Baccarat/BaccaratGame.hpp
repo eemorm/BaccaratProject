@@ -122,7 +122,14 @@ class BaccaratGame
             else if (bankerHand.getCards().size() < 2)
                 bankerHand.addCard(drawCard());
             else
+            {
+                if (playerHand.total() >= 8 || bankerHand.total() >= 8)
+                {
+                    phase = BaccaratPhase::Resolve;
+                    return;
+                }
                 phase = BaccaratPhase::PlayerThirdCard;
+            }
         }
         void playerThirdCard()
         {
@@ -141,13 +148,24 @@ class BaccaratGame
         }
         void bankerThirdCard()
         {
-            if (playerHand.getThirdCard() == nullptr) { phase = BaccaratPhase::Resolve; return; } // check for if player did not draw a third card
-            if (!doesBankerDrawAThirdCard(bankerHand, *playerHand.getThirdCard())) { phase = BaccaratPhase::Resolve; return; } // check for if banker should not draw a third card
-            if (phaseTimer >= 0.5f) // if banker does draw a third card then draw the card and continue to resolve phase
+            int bankerTotal = bankerHand.total();
+
+            if (playerHand.getThirdCard() == nullptr)
             {
-                bankerHand.addCard(drawCard());
+                if (bankerTotal <= 5 && phaseTimer >= 0.5f)
+                    bankerHand.addCard(drawCard());
+
                 phase = BaccaratPhase::Resolve;
+                return;
             }
+
+            if (doesBankerDrawAThirdCard(bankerHand, *playerHand.getThirdCard()))
+            {
+                if (phaseTimer >= 0.5f)
+                    bankerHand.addCard(drawCard());
+            }
+
+            phase = BaccaratPhase::Resolve;
         }
         int payout()
         {
