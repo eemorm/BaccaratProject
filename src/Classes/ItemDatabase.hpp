@@ -11,7 +11,7 @@ namespace ItemDB
         .description = "A dagger. Used for slashing foes.",
         .price = 50,
         .type = ItemType::Weapon,
-        .damage = 5,
+        .damage = 10,
         .armorValue = 0
     };
     inline ItemData Vest 

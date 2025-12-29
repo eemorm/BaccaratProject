@@ -8,12 +8,14 @@
 // SFML
 #include <SFML/Graphics.hpp>
 
+// Standard Libraries
+#include <iostream>
+
 enum class CombatState
 {
     Idle,
-    PlayerTurn,
-    EnemyTurn,
-    Resolving
+    EnemyAttack,
+    EnemyPause
 };
 
 class CombatSystem
@@ -23,6 +25,10 @@ class CombatSystem
 
         Complex* complex;
         PlayerCombat* player;
+
+        sf::Clock turnClock;
+        float pauseTime = 0.6f;
+        size_t currentEnemy = 0;
 
         void playerAttack(Enemy& enemy)
         {
@@ -57,25 +63,59 @@ class CombatSystem
             if (state != CombatState::Idle)
                 return;
 
+            Enemy* clickedEnemy = nullptr;
+
             for (auto& enemy : complex->getCurrentEnemies())
             {
-                if (enemy->getBody().getGlobalBounds().contains(mousePos) && player->getPlayerInventory().getAttacks() > 0)
+                if (enemy->getBody().getGlobalBounds().contains(mousePos) &&
+                    player->getPlayerInventory().getAttacks() > 0)
                 {
-                    playerAttack(*enemy);
-                    state = CombatState::EnemyTurn;
+                    clickedEnemy = enemy.get();
                     break;
                 }
+            }
+
+            if (clickedEnemy)
+            {
+                playerAttack(*clickedEnemy);
+                cleanupDeadEnemies();
+
+                currentEnemy = 0;
+                state = CombatState::EnemyPause;
+                turnClock.restart();
             }
         }
         void update()
         {
             switch (state)
             {
-                case CombatState::EnemyTurn:
-                    enemiesAttack();
-                    cleanupDeadEnemies();
-                    state = CombatState::Idle;
+                case CombatState::EnemyPause:
+                    if (turnClock.getElapsedTime().asSeconds() >= pauseTime)
+                    {
+                        state = CombatState::EnemyAttack;
+                    }
                     break;
+
+                case CombatState::EnemyAttack:
+                {
+                    auto& enemies = complex->getCurrentEnemies();
+
+                    if (currentEnemy < enemies.size())
+                    {
+                        player->takeDamage(enemies[currentEnemy]->getAttackDamage());
+                        currentEnemy++;
+
+                        state = CombatState::EnemyPause;
+                        turnClock.restart();
+                    }
+                    else
+                    {
+                        cleanupDeadEnemies();
+                        state = CombatState::Idle;
+                    }
+                    break;
+                }
+
                 default:
                     break;
             }

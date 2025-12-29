@@ -79,7 +79,7 @@ class Card : public sf::Drawable, public IObjectAction
             backside.setColor(backsideColor);
 
             background.setPosition({0.f, 0.f});
-            number.setPosition({64.f, 2.f});
+            number.setPosition({62.f, 2.f});
             suit.setPosition({34.f, 43.f});
             backside.setPosition({0.f, 0.f});
 
