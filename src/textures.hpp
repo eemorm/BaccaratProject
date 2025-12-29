@@ -73,7 +73,7 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     // ---SET TEXTURES INTO SPRITES---
     table.setTexture(tableTexture);
     theDealerBackground.setTexture(theDealerBackgroundTexture);
-    splitTextures(&theDealerNumbersTexture, 9, &theDealerNumbers, bits);
+    splitTextures(&theDealerNumbersTexture, 13, &theDealerNumbers, bits);
     splitTextures(&theDealerSuitsTexture, 4, &theDealerSuits, bits);
     theDealer.setTexture(theDealerTexture);
 

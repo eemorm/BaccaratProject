@@ -29,6 +29,7 @@ class Deck : public sf::Drawable
         {
             target.draw(sprite, states);
         }
+        int getValueFromCardIndex(int i) { if (i > 8) return 0; return i + 1; }
     public:
         Deck(sf::Sprite sp,
             sf::Sprite& bg,
@@ -51,7 +52,7 @@ class Deck : public sf::Drawable
                     sf::Color::White,
                     sf::Color::White,
                     sf::Color::White,
-                    j + 1);
+                    getValueFromCardIndex(j));
                     deck.push_back(card);
                 }
             }
