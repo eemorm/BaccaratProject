@@ -31,6 +31,6 @@ class PlayerCombat
                 return 0;
             return playerInventory->getEquippedArmor()->getData()->armorValue;
         }
-        void takeDamage(int damage) { int finalDamage = std::max(0, damage - getArmorValue()); currentHealth -= finalDamage; }
+        void takeDamage(int damage) { int finalDamage = std::max(0, damage - getArmorValue() / 2); currentHealth -= finalDamage; }
         bool isDead() const { return currentHealth <= 0; }
 };

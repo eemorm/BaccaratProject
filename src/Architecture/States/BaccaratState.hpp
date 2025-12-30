@@ -136,7 +136,7 @@ class BaccaratState : public GameState
             originalPlayerBetZone = playerBetZone;
 
             //---SHOP---
-            shop.initializeShop();
+            shop.initializeShop(complex.getFloor());
 
             //---COMPLEX AND FLOW---
             complex.spawnEnemiesForFloor();
@@ -257,6 +257,7 @@ class BaccaratState : public GameState
             if (complex.getCurrentEnemies().empty())
             {
                 complex.nextFloor();
+                shop.initializeShop(complex.getFloor());
                 restartGame();
             }
 

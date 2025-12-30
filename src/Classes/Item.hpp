@@ -16,6 +16,8 @@ struct ItemData
     sf::Texture sprite;
     int damage;
     int armorValue;
+    int heal;
+    int minFloor;
 };
 class Item 
 {

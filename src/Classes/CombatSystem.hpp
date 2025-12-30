@@ -38,6 +38,10 @@ class CombatSystem
                 enemy.takeDamage(damage);
                 player->getPlayerInventory().useAttack();
             }
+            if (complex->getCurrentEnemies().size() == 0)
+            {
+                state = CombatState::Idle;
+            }
         }
         void enemiesAttack()
         {

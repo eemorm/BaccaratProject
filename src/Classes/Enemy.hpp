@@ -14,6 +14,7 @@ struct EnemyData
     int attackDamage;
     int level;
     sf::Color color;
+    int minFloor;
 };
 class Enemy : public sf::Drawable
 {
@@ -38,6 +39,6 @@ class Enemy : public sf::Drawable
         void setPosition(sf::Vector2f pos) { body.setPosition(pos); }
         int getAttackDamage() { return data->attackDamage; }
         int getCurrentHealth() { return currentHealth; }
-        virtual void takeDamage(int damage) { int finalDamage = std::max(0, damage - data->armorValue); currentHealth -= finalDamage; }
+        virtual void takeDamage(int damage) { int finalDamage = std::max(0, damage - data->armorValue / 2); currentHealth -= finalDamage; }
         bool isDead() { return currentHealth <= 0; }
 };

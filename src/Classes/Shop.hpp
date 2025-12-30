@@ -10,6 +10,7 @@
 
 // Standard Libraries
 #include <iostream>
+#include <random>
 #include <string>
 #include <memory>
 
@@ -19,6 +20,18 @@ class Shop : public sf::Drawable
         std::vector<ItemData*> availableItems;
         Inventory* playerInventory;
         WealthManager* chipWealthManager;
+        std::vector<ItemData*> itemPool =
+        {
+            &ItemDB::Attack,
+            &ItemDB::Dagger,
+            &ItemDB::Sword,
+            &ItemDB::ThrowingCard,
+            &ItemDB::Vest,
+            &ItemDB::Chainmail,
+            &ItemDB::GuardsHide,
+            &ItemDB::Potion,
+            &ItemDB::LargePotion
+        };
 
         //---UI---
         UIButton shopButton;
@@ -40,14 +53,50 @@ class Shop : public sf::Drawable
                     shopOpen = !shopOpen;
                 }
             ) {}
+
         std::vector<ItemData*> getItems() { return availableItems; }
         bool getShopOpen() { return shopOpen; }
-        void initializeShop() 
+        std::unique_ptr<ItemData> scaleItem(ItemData* base, int floor)
         {
-            availableItems.push_back(&ItemDB::Dagger);
-            availableItems.push_back(&ItemDB::Vest);
-            availableItems.push_back(&ItemDB::Heal);
-            availableItems.push_back(&ItemDB::Attack);
+            auto scaled = std::make_unique<ItemData>(*base);
+
+            int scaleFactor = std::max(0, floor - scaled->minFloor + 1);
+            scaled->price += scaleFactor * 25;
+
+            if (scaled->damage > 0)
+                scaled->damage += scaleFactor * 2;
+            if (scaled->armorValue > 0)
+                scaled->armorValue += scaleFactor / 2;
+            if (scaled->heal > 0)
+                scaled->heal += scaleFactor * 3;
+
+            return scaled;
+        }
+        void initializeShop(int floor) 
+        {
+            availableItems.clear();
+
+            std::random_device rd;
+            std::mt19937 rng(rd());
+
+            std::vector<ItemData*> candidates;
+
+            for (auto* item : itemPool)
+            {
+                if (item->minFloor <= floor && item->type != ItemType::Attack)
+                    candidates.push_back(item);
+            }
+
+            std::shuffle(candidates.begin(), candidates.end(), rng);
+
+            int shopSize = std::min(2 + floor / 2, 7);
+
+            for (int i = 0; i < shopSize && i < candidates.size(); i++)
+            {
+                auto scaled = scaleItem(candidates[i], floor);
+                availableItems.push_back(scaled.release());
+            }
+            availableItems.push_back(itemPool[0]);
         }
         void addItem(ItemData* data) { availableItems.push_back(data); }
         void buyItem(int index) 

@@ -22,23 +22,29 @@ class Complex
 
         std::vector<EnemyData*> enemyPool = 
         {
+            &EnemyDB::Insect,
             &EnemyDB::Rat,
+            &EnemyDB::Reaper,
             &EnemyDB::Thug,
-            &EnemyDB::Guard
+            &EnemyDB::Guard,
+            &EnemyDB::Executioner
         };
         std::vector<std::unique_ptr<Enemy>> currentEnemies;
 
-        int floor = 0;
+        int floor = 1;
     public:
         Complex() {}
         std::vector<std::unique_ptr<Enemy>>& getCurrentEnemies() { return currentEnemies; }
+        int getFloor() { return floor; }
         std::unique_ptr<Enemy> spawnEnemyFromTemplate(EnemyData* data, int floorLevel) 
         {
             auto scaledData = std::make_unique<EnemyData>(*data);
 
-            scaledData->maxHealth += floorLevel * 5;    
-            scaledData->attackDamage += floorLevel * 2;
-            scaledData->armorValue += floorLevel;
+            int scaledFloor = floor - 1;
+
+            scaledData->maxHealth += scaledFloor * 5;    
+            scaledData->attackDamage += scaledFloor * 2;
+            scaledData->armorValue += scaledFloor;
 
             return std::make_unique<Enemy>(std::move(scaledData));
         }
@@ -49,13 +55,24 @@ class Complex
 
             std::random_device rd;
             std::mt19937 rng(rd());
-            std::uniform_int_distribution<int> dist(0, enemyPool.size() - 1);
 
-            int numEnemies = std::min(floor + 2, 5); // example: 2 enemies at floor 0, +1 per floor, max 5
+            std::vector<EnemyData*> candidates;
+
+            for (auto& enemy : enemyPool)
+            {
+                if (enemy->minFloor <= floor)
+                    candidates.push_back(enemy);
+            }
+
+            std::shuffle(candidates.begin(), candidates.end(), rng);
+
+            int numEnemies = std::min(floor + 1, 5); 
+
+            std::uniform_int_distribution<int> dist(0, candidates.size() - 1);
 
             for (int i = 0; i < numEnemies; i++) 
             {
-                EnemyData* templateData = enemyPool[dist(rng)];
+                EnemyData* templateData = candidates[dist(rng)];
                 auto enemy = spawnEnemyFromTemplate(templateData, floor);
 
                 enemy->setPosition({ 300.f + i * 60.f, 300.f });
