@@ -177,7 +177,7 @@ class BaccaratGame
             {
                 case BetTarget::Player:
                     if (winner == BaccaratResult::Player)
-                        amount = currentBet.amount * 19;
+                        amount = currentBet.amount * 2;
                     break;
 
                 case BetTarget::Banker:
