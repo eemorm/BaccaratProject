@@ -102,6 +102,15 @@ class ChipStack : public sf::Drawable, public IObjectAction
                 pickupHeight
             );
         }
+        bool isMouseInBounds(sf::Vector2f mousePos) 
+        {
+            for (auto& chip : chips)
+            {
+                if (getPickupBounds(chip.sprite).contains(mousePos))
+                    return true;
+            }
+            return false;
+        }
         int getClickedChipIndex(sf::Vector2f mousePos)
         {
             if (chips.empty()) return -1;

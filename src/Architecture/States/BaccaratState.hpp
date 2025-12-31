@@ -282,10 +282,38 @@ class BaccaratState : public GameState
             }
 
             //---UPDATE TEXT---
-            ui.cursorText.setString(
-                "X: " + std::to_string((int)mousePos.x) +
-                " Y: " + std::to_string((int)mousePos.y)
-            );
+            bool hoveringEnemy = false;
+            bool hoveringChip = false;
+            int chipHoverValue = 0;
+
+            for (auto& enemy : complex.getCurrentEnemies())
+            {
+                if (enemy->getBody().getGlobalBounds().contains(mousePos))
+                {
+                    hoveringEnemy = true;
+                    break;
+                }
+            }
+
+            for (auto& stack : chipWealthManager.getStacks())
+            {
+                if (stack->isMouseInBounds(mousePos))
+                {
+                    hoveringChip = true;
+                    chipHoverValue = stack->getChipValue();
+                    break;
+                }
+            }
+
+            if (hoveringEnemy && inventory.getAttacks() > 0)
+                ui.cursorText.setString("ATTACK");
+            else if (hoveringEnemy)
+                ui.cursorText.setString("NEED ATTACKS");
+            else if (hoveringChip)
+                ui.cursorText.setString("$" + std::to_string(chipHoverValue));
+            else
+                ui.cursorText.setString("");
+
             ui.cursorText.setPosition(mousePos + sf::Vector2f(10.f, -25.f)); // offset so text doesn’t overlap cursor
             ui.moneyText.setString("Bet: $" + std::to_string(game.getBetAmount()) + "\nWealth: $" + std::to_string(chipWealthManager.getWealth()));
             ui.attacksText.setString("Attacks: " + std::to_string(inventory.getAttacks()));
