@@ -123,8 +123,8 @@ class Shop : public sf::Drawable
             }
             std::cout << "Bought " << data->name << " for " << data->price << " coins.\n";
             chipWealthManager->addWealth(-(data->price));
-            if (data->type != ItemType::Attack)
-                availableItems.erase(availableItems.begin() + index);
+            //if (data->type != ItemType::Attack)
+                //availableItems.erase(availableItems.begin() + index);
             hoveredIndex = -1;
         }
         void handleEvent(sf::Event& event, sf::Vector2f mousePos) 

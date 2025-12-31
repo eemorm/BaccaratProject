@@ -257,7 +257,7 @@ class BaccaratState : public GameState
                     ui.payoutText.setString("Payout: $" + std::to_string(winnings));
                     if (chipWealthManager.getWealth() > 0)
                         ui.restartGameButton.setActive(true);
-                    else if (chipWealthManager.getWealth() == 0 || playerHealth.getCurrentHealth() <= 0)
+                    else if (chipWealthManager.getWealth() == 0)
                     {
                         states->changeState(StateID::Death, window);
                         return;
@@ -269,10 +269,17 @@ class BaccaratState : public GameState
             {
                 complex.nextFloor();
                 shop.initializeShop(complex.getFloor());
+                chipWealthManager.addWealth(200);
                 restartGame();
             }
 
             combatSystem.update();
+
+            if (playerHealth.getCurrentHealth() <= 0)
+            {
+                states->changeState(StateID::Death, window);
+                return;
+            }
 
             //---UPDATE TEXT---
             ui.cursorText.setString(
