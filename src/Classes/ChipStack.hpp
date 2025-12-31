@@ -23,6 +23,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
         };
 
         sf::Vector2f position;
+        sf::Sprite chipSprite;
 
         std::vector<Chip> chips;
         std::vector<Chip> heldChips;
@@ -40,7 +41,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
                 target.draw(chip.sprite);
         }
     public:
-        ChipStack(sf::Vector2f p, int v) : position(p), chipValue(v) {}
+        ChipStack(sf::Vector2f p, int v, sf::Sprite s) : position(p), chipSprite(s), chipValue(v) { chipSprite.setScale(3, 3); }
         std::vector<Chip>& getChips() { return chips; }
         std::vector<Chip>& getHeldChips() { return heldChips; }
         int getChipValue() { return chipValue; }
@@ -64,7 +65,7 @@ class ChipStack : public sf::Drawable, public IObjectAction
         void addChip(sf::Sprite sprite)
         {
             Chip chip;
-            chip.sprite = theDealerBackground;
+            chip.sprite = chipSprite;
             chips.push_back(chip);
             updateStackPositions();
         }
@@ -89,22 +90,37 @@ class ChipStack : public sf::Drawable, public IObjectAction
             returned.clear();
             updateStackPositions();
         }
+        sf::FloatRect getPickupBounds(sf::Sprite sprite)
+        {
+            sf::FloatRect spriteBounds = sprite.getGlobalBounds();
+
+            float pickupHeight = 53.f;
+            return sf::FloatRect(
+                spriteBounds.left,
+                spriteBounds.top + spriteBounds.height - pickupHeight,
+                spriteBounds.width,
+                pickupHeight
+            );
+        }
         int getClickedChipIndex(sf::Vector2f mousePos)
         {
             if (chips.empty()) return -1;
 
             for (int i = chips.size() - 1; i >= 0; --i)
-                if (chips[i].sprite.getGlobalBounds().contains(mousePos))
+            {
+                if (getPickupBounds(chips[i].sprite).contains(mousePos))
                     return i;
+            }
 
             return -1;
         }
         void acceptBet() { heldChips.clear(); isDragging = false; }
         bool isMouseOver(float x, float y) override
         {
-            for (auto i = 0; i < chips.size(); i++)
+            for (int i = chips.size() - 1; i >= 0; --i)
             {
-                if (chips[i].sprite.getGlobalBounds().contains(x, y)) { return chips[i].sprite.getGlobalBounds().contains(x, y); }
+                if (getPickupBounds(chips[i].sprite).contains(x, y))
+                    return true;
             }
             return false;
         }

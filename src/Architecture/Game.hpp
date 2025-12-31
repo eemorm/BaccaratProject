@@ -3,6 +3,7 @@
 // Custom Includes
 #include "GameStateManager.hpp"
 #include "States/BaccaratState.hpp"
+#include "States/MainMenuState.hpp"
 
 // SFML
 #include <SFML/Graphics.hpp>
@@ -24,7 +25,7 @@ class Game
         // constructor to initialize window and set initial game state
         Game(sf::RenderWindow& w) : window(w)
         {
-            states.setState(std::make_unique<BaccaratState>(window));
+            states.changeState(StateID::MainMenu, window);
         }
         void run() // main game loop, extracted from main.cpp for better organization
         {

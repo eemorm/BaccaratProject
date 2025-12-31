@@ -42,10 +42,10 @@ class WealthManager : public sf::Drawable
         }
     public:
         WealthManager() 
-        : stack100({55, 639}, 100),
-          stack50({155, 639}, 50),
-          stack10({255, 639}, 10),
-          stack1({355, 639}, 1)
+        : stack100({55, 639}, 100, chips[3]),
+          stack50({155, 639}, 50, chips[2]),
+          stack10({255, 639}, 10, chips[1]),
+          stack1({355, 639}, 1, chips[0])
         {}
 
         void initializeManager()

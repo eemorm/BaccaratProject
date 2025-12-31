@@ -6,6 +6,17 @@
 // Standard IO
 #include <memory>
 
+enum class StateID
+{
+    MainMenu,
+    Baccarat,
+    Death
+};
+
+class MainMenuState;
+class BaccaratState;
+class DeathState;
+
 /*
     class GameStateManager
 
@@ -18,10 +29,11 @@ class GameStateManager
     private:
         std::unique_ptr<GameState> currentState; // keep reference to current game state
     public:
-        void setState(std::unique_ptr<GameState> state) { currentState = std::move(state); } // change state in the manager
-        void handleEvent(sf::Event& event) { if (currentState) currentState->handleEvent(event); } // pass event to current state to handle, handle event through a pointer to have polymorphism
-        void update(float dt) { if (currentState) currentState->update(dt); } // update current state with respect to delta time, update through a pointer to have polymorphism
-        void draw(sf::RenderWindow& window) { if (currentState) currentState->draw(window);} // draw current state to window, draw through a pointer to have polymorphism
+        void changeState(StateID id, sf::RenderWindow& window); // change state in the manager
+
+        void handleEvent(sf::Event& event); // pass event to current state to handle, handle event through a pointer to have polymorphism
+        void update(float dt); // update current state with respect to delta time, update through a pointer to have polymorphism
+        void draw(sf::RenderWindow& window); // draw current state to window, draw through a pointer to have polymorphism
         /* NOTE: for reference, the pointer is to a GameState, but the actual object is a derived class of GameState such as BaccaratState. This allows for polymorphism,
         meaning that the correct overridden methods in the derived class are called instead of the base class methods. */
 };

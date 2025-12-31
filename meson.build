@@ -3,7 +3,7 @@ project('BaccaratProject', 'cpp', default_options: ['cpp_std=c++17'])
 cxx = meson.get_compiler('cpp')
 
 # ---- Sources ----
-sources = files('src/main.cpp')
+sources = files('src/main.cpp', 'src/Architecture/GameStateManager.cpp')
 
 # ---- Detect host OS ----
 if host_machine.system() == 'darwin'

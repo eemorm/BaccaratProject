@@ -10,6 +10,8 @@
 #include <cstdlib>
 
 // Music
+inline std::unique_ptr<sf::Music> m_maintheme = std::make_unique<sf::Music>();
+inline std::unique_ptr<sf::Music> m_falling = std::make_unique<sf::Music>();
 inline std::vector<std::unique_ptr<sf::Music>> baccarat1;
 
 // SFX
@@ -45,22 +47,25 @@ inline void loadAudio()
 {
     // Music
     std::unique_ptr<sf::Music> m_Space = std::make_unique<sf::Music>();
-    std::unique_ptr<sf::Music> m_sketch = std::make_unique<sf::Music>();
     std::unique_ptr<sf::Music> m_sketch2 = std::make_unique<sf::Music>();
     std::unique_ptr<sf::Music> m_daria = std::make_unique<sf::Music>();
     std::unique_ptr<sf::Music> m_ca2 = std::make_unique<sf::Music>();
 
+    if (!m_maintheme->openFromFile("audio/music/maintheme.mp3")) { std::cout << "Failed to load audio file"; }
+    if (!m_falling->openFromFile("audio/music/falling.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_Space->openFromFile("audio/music/SPACE.mp3")) { std::cout << "Failed to load audio file"; }
-    if (!m_sketch->openFromFile("audio/music/sketch.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_sketch2->openFromFile("audio/music/sketch2.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_daria->openFromFile("audio/music/dariacore3.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_ca2->openFromFile("audio/music/CA2.mp3")) { std::cout << "Failed to load audio file"; }
 
+    m_maintheme->setLoop(true);
+    m_maintheme->setVolume(10.f);
+
+    m_falling->setLoop(true);
+    m_falling->setVolume(10.f);
+
     m_Space->setLoop(true);
     m_Space->setVolume(10.f);
-
-    m_sketch->setLoop(true);
-    m_sketch->setVolume(10.f);
 
     m_sketch2->setLoop(true);
     m_sketch2->setVolume(10.f);
@@ -72,7 +77,6 @@ inline void loadAudio()
     m_ca2->setVolume(10.f);
 
     baccarat1.push_back(std::move(m_Space));
-    //baccarat1.push_back(std::move(m_sketch));
     baccarat1.push_back(std::move(m_sketch2));
     baccarat1.push_back(std::move(m_daria));
     baccarat1.push_back(std::move(m_ca2));
@@ -131,6 +135,8 @@ inline void playRandom(std::vector<std::unique_ptr<sf::Sound>>& tracks)
 
 inline void stopAllMusic()
 {
+    m_maintheme->stop();
+    m_falling->stop();
     for (auto& music : baccarat1)
     {
         if (music->getStatus() == sf::Music::Playing)

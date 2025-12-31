@@ -21,25 +21,27 @@ const unsigned int SCREEN_WIDTH = 1366;
 const unsigned int SCREEN_HEIGHT = 768;
 
 // ---TEXTURES FOR SPRITES---
-sf::Texture tableTexture;
-sf::Texture theDealerBackgroundTexture;
-sf::Texture theDealerNumbersTexture;
-sf::Texture theDealerSuitsTexture;
-sf::Texture theDealerTexture;
+inline sf::Texture tableTexture;
+inline sf::Texture theDealerBackgroundTexture;
+inline sf::Texture theDealerNumbersTexture;
+inline sf::Texture theDealerSuitsTexture;
+inline sf::Texture theDealerTexture;
+inline sf::Texture chipsTexture;
 
 // ---SPRITES---
-sf::Sprite table;
-sf::Sprite theDealerBackground;
-std::vector<sf::Sprite> theDealerNumbers;
-std::vector<sf::Sprite> theDealerSuits;
-sf::Sprite theDealer;
+inline sf::Sprite table;
+inline sf::Sprite theDealerBackground;
+inline std::vector<sf::Sprite> theDealerNumbers;
+inline std::vector<sf::Sprite> theDealerSuits;
+inline sf::Sprite theDealer;
+inline std::vector<sf::Sprite> chips;
 
 // ---SHADERS---
-sf::Shader ditherShader;
-sf::Shader pixelationShader;
+inline sf::Shader ditherShader;
+inline sf::Shader pixelationShader;
 
 //---FONTS---
-sf::Font font;
+inline sf::Font font;
 
 inline void splitTextures(sf::Texture* texture, int sections, std::vector<sf::Sprite>* destination, float size) // splits textures that are in sections
 {
@@ -69,6 +71,8 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerTexture.loadFromFile("textures/Dealers/theDealer.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!chipsTexture.loadFromFile("textures/Core/chips.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
 
     // ---SET TEXTURES INTO SPRITES---
     table.setTexture(tableTexture);
@@ -76,6 +80,7 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     splitTextures(&theDealerNumbersTexture, 13, &theDealerNumbers, bits);
     splitTextures(&theDealerSuitsTexture, 4, &theDealerSuits, bits);
     theDealer.setTexture(theDealerTexture);
+    splitTextures(&chipsTexture, 4, &chips, bits);
 
     // ---LOAD SHADERS---
     if (!ditherShader.loadFromFile("shaders/dither.frag", sf::Shader::Fragment))

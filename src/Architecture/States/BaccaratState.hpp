@@ -3,6 +3,7 @@
 // Custom Includes
 #include "../../textures.hpp"
 #include "../GameState.hpp"
+#include "../GameStateManager.hpp"
 #include "../../Classes/Card.hpp"
 #include "../../Classes/Deck.hpp"
 #include "../../Classes/ChipStack.hpp"
@@ -43,6 +44,7 @@ class BaccaratState : public GameState
     private:
         //---WINDOW---
         sf::RenderWindow& window; // window; comes from Game class which comes from main.cpp; passed by reference for rendering
+        GameStateManager* states;
 
         //---LIGHTING---
         LightSystem lighting; // light system to manage the lighting
@@ -87,8 +89,9 @@ class BaccaratState : public GameState
         sf::Vector2f mousePos; // mouse position
     public:
         // constructor, initializes objects that don't have default constructors
-        inline BaccaratState(sf::RenderWindow& w) : 
+        inline BaccaratState(sf::RenderWindow& w, GameStateManager* gsm) : 
             window(w),
+            states(gsm),
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
             game(deck),
@@ -147,6 +150,7 @@ class BaccaratState : public GameState
             ui.restartGameButton.setActive(false);
 
             game.startRound(); // start the round of baccarat
+            stopAllMusic();
             playRandom(baccarat1);
         }
 
@@ -249,8 +253,11 @@ class BaccaratState : public GameState
                     ui.payoutText.setString("Payout: $" + std::to_string(winnings));
                     if (chipWealthManager.getWealth() > 0)
                         ui.restartGameButton.setActive(true);
-                    else
-                        std::cout << "YOU DIED!" << std::endl;
+                    else if (chipWealthManager.getWealth() == 0 || playerCombat.getCurrentHealth() <= 0)
+                    {
+                        states->changeState(StateID::Death, window);
+                        return;
+                    }
                 }
             }
 
