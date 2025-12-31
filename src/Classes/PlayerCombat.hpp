@@ -11,14 +11,9 @@ class PlayerCombat
 {
     private:
         Inventory* playerInventory;
-
-        int maxHealth;
-        int currentHealth;
     public:
-        PlayerCombat(Inventory* i, int h) : playerInventory(i), maxHealth(h), currentHealth(h) {}
+        PlayerCombat(Inventory* i) : playerInventory(i) {}
         Inventory& getPlayerInventory() { return *playerInventory; }
-        int getMaxHealth() { return maxHealth; }
-        int getCurrentHealth() { return currentHealth; }
         int getAttackDamage()
         {
             if (!playerInventory->getEquippedWeapon())
@@ -31,6 +26,4 @@ class PlayerCombat
                 return 0;
             return playerInventory->getEquippedArmor()->getData()->armorValue;
         }
-        void takeDamage(int damage) { int finalDamage = std::max(0, damage - getArmorValue() / 2); currentHealth -= finalDamage; }
-        bool isDead() const { return currentHealth <= 0; }
 };

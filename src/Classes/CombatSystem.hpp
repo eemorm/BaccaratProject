@@ -3,6 +3,7 @@
 // Custom Includes
 #include "Enemy.hpp"
 #include "PlayerCombat.hpp"
+#include "PlayerHealth.hpp"
 #include "Complex.hpp"
 
 // SFML
@@ -24,7 +25,8 @@ class CombatSystem
         CombatState state = CombatState::Idle;
 
         Complex* complex;
-        PlayerCombat* player;
+        PlayerCombat* playerCombat;
+        PlayerHealth* playerHealth;
 
         sf::Clock turnClock;
         float pauseTime = 0.6f;
@@ -32,11 +34,11 @@ class CombatSystem
 
         void playerAttack(Enemy& enemy)
         {
-            int damage = player->getAttackDamage();
-            if (player->getPlayerInventory().getAttacks() > 0)
+            int damage = playerCombat->getAttackDamage();
+            if (playerCombat->getPlayerInventory().getAttacks() > 0)
             {
                 enemy.takeDamage(damage);
-                player->getPlayerInventory().useAttack();
+                playerCombat->getPlayerInventory().useAttack();
             }
             if (complex->getCurrentEnemies().size() == 0)
             {
@@ -48,7 +50,7 @@ class CombatSystem
             for (auto& enemy : complex->getCurrentEnemies())
             {
                 int enemyDamage = enemy->getAttackDamage();
-                player->takeDamage(enemyDamage);
+                playerHealth->takeDamage(enemyDamage, playerCombat->getArmorValue());
             }
         }
         void cleanupDeadEnemies()
@@ -61,7 +63,7 @@ class CombatSystem
             );
         }
     public:
-        CombatSystem(Complex* c, PlayerCombat* p) : complex(c), player(p) {}
+        CombatSystem(Complex* c, PlayerCombat* pc, PlayerHealth* ph) : complex(c), playerCombat(pc), playerHealth(ph) {}
         void handlePlayerClick(sf::Vector2f mousePos)
         {
             if (state != CombatState::Idle)
@@ -72,7 +74,7 @@ class CombatSystem
             for (auto& enemy : complex->getCurrentEnemies())
             {
                 if (enemy->getBody().getGlobalBounds().contains(mousePos) &&
-                    player->getPlayerInventory().getAttacks() > 0)
+                    playerCombat->getPlayerInventory().getAttacks() > 0)
                 {
                     clickedEnemy = enemy.get();
                     break;
@@ -106,7 +108,7 @@ class CombatSystem
 
                     if (currentEnemy < enemies.size())
                     {
-                        player->takeDamage(enemies[currentEnemy]->getAttackDamage());
+                        playerHealth->takeDamage(enemies[currentEnemy]->getAttackDamage(), playerCombat->getArmorValue());
                         currentEnemy++;
 
                         state = CombatState::EnemyPause;

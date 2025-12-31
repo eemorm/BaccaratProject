@@ -1,5 +1,8 @@
 #pragma once
 
+// Custom Includes
+#include "PlayerHealth.hpp"
+
 // SFML
 #include <SFML/Graphics.hpp>
 
@@ -28,14 +31,14 @@ class Item
         virtual ~Item() {}
 
         ItemData* getData() { return data; }
-        virtual void use() {}
+        virtual void use(PlayerHealth& player) {}
 };
-class Consumable : public Item 
+class Consumable : public Item
 {
     public:
         Consumable(ItemData* d) : Item(d) {}
-        void use() override
+        void use(PlayerHealth& player) override
         {
-            std::cout << "Used consumable:  " << data->name << "\n";
+            player.heal(data->heal);
         }
 };

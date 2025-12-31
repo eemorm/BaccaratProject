@@ -105,7 +105,6 @@ class Shop : public sf::Drawable
 
             if(index < 0 || index >= availableItems.size()) return;
             if (chipWealthManager->getWealth() < data->price) return;
-            if (playerInventory->getConsumables().size() >= playerInventory->getConsumablesLimit()) return;
 
             std::unique_ptr<Item> newItem;
             switch(data->type) 
@@ -114,8 +113,10 @@ class Shop : public sf::Drawable
                     playerInventory->equipWeapon(std::make_unique<Item>(data)); break;
                 case ItemType::Armor: 
                     playerInventory->equipArmor(std::make_unique<Item>(data)); break;
-                case ItemType::Consumable: 
-                    playerInventory->addConsumable(std::make_unique<Consumable>(data)); break;
+                case ItemType::Consumable:
+                {
+                    auto consumable = std::make_unique<Consumable>(data); consumable->use(*playerInventory->getPlayerHealth()); break;
+                }
                 case ItemType::Attack:
                     playerInventory->addAttack(1); break;
                 default: return;

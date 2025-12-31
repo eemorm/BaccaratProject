@@ -15,6 +15,7 @@
 #include "../../Classes/Inventory.hpp"
 #include "../../Classes/Complex.hpp"
 #include "../../Classes/PlayerCombat.hpp"
+#include "../../Classes/PlayerHealth.hpp"
 #include "../../Classes/CombatSystem.hpp"
 #include "../../Classes/LightSystem.hpp"
 #include "../../UI/StateUI/BaccaratUI.hpp"
@@ -72,14 +73,15 @@ class BaccaratState : public GameState
         bool roundOver = false; // flag to check if round is over, used to trigger payout only once
     
         //---SHOP AND PLAYER---
-        Shop shop;
+        PlayerHealth playerHealth;
         Inventory inventory;
+        Shop shop;
+        PlayerCombat playerCombat;
 
         //---COMPLEX AND FLOW---
         Complex complex;
 
         //---COMBAT SYSTEM---
-        PlayerCombat playerCombat;
         CombatSystem combatSystem;
 
         //---UI---
@@ -95,9 +97,11 @@ class BaccaratState : public GameState
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
             game(deck),
+            playerHealth(100.f),
+            inventory(&playerHealth),
             shop(&inventory, &chipWealthManager),
-            playerCombat(&inventory, 100.f),
-            combatSystem(&complex, &playerCombat)
+            playerCombat(&inventory),
+            combatSystem(&complex, &playerCombat, &playerHealth)
         { 
             //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -253,7 +257,7 @@ class BaccaratState : public GameState
                     ui.payoutText.setString("Payout: $" + std::to_string(winnings));
                     if (chipWealthManager.getWealth() > 0)
                         ui.restartGameButton.setActive(true);
-                    else if (chipWealthManager.getWealth() == 0 || playerCombat.getCurrentHealth() <= 0)
+                    else if (chipWealthManager.getWealth() == 0 || playerHealth.getCurrentHealth() <= 0)
                     {
                         states->changeState(StateID::Death, window);
                         return;
@@ -279,7 +283,7 @@ class BaccaratState : public GameState
             ui.moneyText.setString("Bet: $" + std::to_string(game.getBetAmount()) + "\nWealth: $" + std::to_string(chipWealthManager.getWealth()));
             ui.attacksText.setString("Attacks: " + std::to_string(inventory.getAttacks()));
             ui.winText.setString(game.resultToString());
-            ui.healthBar.updateBar(playerCombat.getCurrentHealth());
+            ui.healthBar.updateBar(playerHealth.getCurrentHealth());
         }
         // draws everything to the screen
         inline void draw(sf::RenderWindow& window) override
