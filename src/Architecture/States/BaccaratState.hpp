@@ -130,7 +130,7 @@ class BaccaratState : public GameState
 
             //---SET UP WEALTH MANAGER---
             chipWealthManager.initializeManager();
-            chipWealthManager.setWealth(2000);
+            chipWealthManager.setWealth(385);
 
             //---PREPARE GAME OBJECTS---
             deck.setPosition({1100, 600});
