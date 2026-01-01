@@ -4,6 +4,7 @@
 #include "BaccaratHand.hpp"
 #include "../Classes/Deck.hpp"
 #include "../Classes/Card.hpp"
+#include "../Classes/PlayerStats.hpp"
 
 // Standard Libraries
 #include <vector>
@@ -50,8 +51,9 @@ class BaccaratGame
         float phaseTimer = 0.f;
         Deck& deck;
         Bet currentBet;
+        PlayerStats& playerStats;
     public:
-        BaccaratGame(Deck& d) : deck(d) { rng = std::mt19937{ std::random_device{}() };}
+        BaccaratGame(Deck& d, PlayerStats& ps) : deck(d), playerStats(ps) { rng = std::mt19937{ std::random_device{}() };}
 
         BaccaratHand& getPlayerHand() { return playerHand; }
         BaccaratHand& getBankerHand() { return bankerHand; }
@@ -177,17 +179,17 @@ class BaccaratGame
             {
                 case BetTarget::Player:
                     if (winner == BaccaratResult::Player)
-                        amount = currentBet.amount * 2;
+                        amount = currentBet.amount * (2 + playerStats.getPlayerReturnMultiplierBonus());
                     break;
 
                 case BetTarget::Banker:
                     if (winner == BaccaratResult::Banker)
-                        amount = static_cast<int>(currentBet.amount * 1.95);
+                        amount = static_cast<int>(currentBet.amount * (1.95 + playerStats.getBankerReturnMultiplierBonus()));
                     break;
 
                 case BetTarget::Tie:
                     if (winner == BaccaratResult::Tie)
-                        amount = currentBet.amount * 9;
+                        amount = currentBet.amount * (9 + playerStats.getTieReturnMultiplierBonus());
                     break;
 
                 default:

@@ -28,6 +28,7 @@ class BaccaratUI : public sf::Drawable
         sf::Text attacksText;
         sf::Text winText;
         sf::Text payoutText;
+        sf::Text floorText;
         UIButton& confirmBetButton;
         UIButton& restartGameButton;
         UIBar& healthBar;
@@ -55,7 +56,9 @@ class BaccaratUI : public sf::Drawable
         {
             cursorText.setFont(font);
             cursorText.setCharacterSize(24);
-            cursorText.setFillColor(sf::Color::Blue);
+            cursorText.setFillColor(sf::Color(8, 121, 158));
+            cursorText.setOutlineColor(sf::Color::Black);
+            cursorText.setOutlineThickness(2.f);
 
             moneyText.setFont(font);
             moneyText.setCharacterSize(24);
@@ -78,6 +81,11 @@ class BaccaratUI : public sf::Drawable
             payoutText.setPosition(20.f, 200.f);
             payoutText.setFillColor(sf::Color(255, 255, 255, 255));
             payoutText.setStyle(sf::Text::Bold);
+
+            floorText.setFont(font);
+            floorText.setCharacterSize(64);
+            floorText.setFillColor(sf::Color::White);
+            floorText.setStyle(sf::Text::Bold);
         }
         void handleEvent(sf::Event& event, sf::Vector2f mouse) { ui.handleEvent(event, mouse); }
         void update(float dt) { ui.update(dt); }

@@ -16,7 +16,9 @@
 #include "../../Classes/Complex.hpp"
 #include "../../Classes/PlayerCombat.hpp"
 #include "../../Classes/PlayerHealth.hpp"
+#include "../../Classes/PlayerStats.hpp"
 #include "../../Classes/CombatSystem.hpp"
+#include "../../Classes/EdgeManager.hpp"
 #include "../../Classes/LightSystem.hpp"
 #include "../../UI/StateUI/BaccaratUI.hpp"
 #include "../../audio.hpp"
@@ -43,6 +45,13 @@
 class BaccaratState : public GameState
 {
     private:
+        enum class RoundState
+        {
+            Baccarat,
+            ChoosingEdge,
+            NextFloor
+        };
+
         //---WINDOW---
         sf::RenderWindow& window; // window; comes from Game class which comes from main.cpp; passed by reference for rendering
         GameStateManager* states;
@@ -52,6 +61,9 @@ class BaccaratState : public GameState
         sf::RenderTexture lightingRT; // render texture for lighting pass
         sf::RenderTexture worldRT; // render texture for world pass
         sf::RenderTexture ditherRT; // render texture for the dither shader
+
+        //---PLAYER STATS--- (yes it gets its own category)
+        PlayerStats playerStats;
 
         //---GAME OBJECTS---
         // NOTE: order of these declarations matters for initialization order
@@ -80,12 +92,17 @@ class BaccaratState : public GameState
 
         //---COMPLEX AND FLOW---
         Complex complex;
+        RoundState roundState = RoundState::Baccarat;
 
         //---COMBAT SYSTEM---
         CombatSystem combatSystem;
 
+        //---EDGES---
+        EdgeManager edgeManager;
+
         //---UI---
         BaccaratUI ui;
+        sf::Clock floorTransitionClock;
 
         //---MISC---
         sf::Vector2f mousePos; // mouse position
@@ -96,8 +113,8 @@ class BaccaratState : public GameState
             states(gsm),
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
             deck(theDealerBackground, theDealerBackground, theDealerNumbers, theDealerSuits, theDealerBackground),
-            game(deck),
-            playerHealth(100.f),
+            game(deck, playerStats),
+            playerHealth(100.f, playerStats),
             inventory(&playerHealth),
             shop(&inventory, &chipWealthManager),
             playerCombat(&inventory),
@@ -162,6 +179,28 @@ class BaccaratState : public GameState
         inline void handleEvent(sf::Event& event) override
         {
             mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window)); // get mouse position in world coordinates
+
+            if (roundState == RoundState::ChoosingEdge)
+            {
+                if (edgeManager.handleEvent(event, mousePos))
+                {
+                    Edge& chosen = edgeManager.getSelectedEdge();
+                    playerStats.applyEdge(chosen);
+
+                    edgeManager.close();
+
+                    roundState = RoundState::NextFloor;
+                    floorTransitionClock.restart();
+
+                    complex.nextFloor();
+                    shop.initializeShop(complex.getFloor());
+                    chipWealthManager.addWealth(200);
+                }
+
+                return;
+            }
+            if (roundState == RoundState::NextFloor)
+                return; 
 
             shop.handleEvent(event, mousePos);
             if (shop.getShopOpen()) return;
@@ -229,6 +268,20 @@ class BaccaratState : public GameState
         // updates every frame with respect to delta time
         inline void update(float dt) override
         {
+            if (roundState == RoundState::NextFloor)
+            {
+                sf::FloatRect bounds = ui.floorText.getLocalBounds();
+                ui.floorText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+                ui.floorText.setPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+                ui.floorText.setString("FLOOR " + std::to_string(complex.getFloor()));
+                if (floorTransitionClock.getElapsedTime().asSeconds() >= 1.2f)
+                {
+                    restartGame();
+                    roundState = RoundState::Baccarat;
+                }
+                return;
+            }
+
             for (auto* object : chipWealthManager.getStacks())
                 object->update(dt); // update wealth manager to update chip stacks
             game.update(dt); // update the baccarat game logic with respect to delta time
@@ -265,12 +318,12 @@ class BaccaratState : public GameState
                 }
             }
 
-            if (complex.getCurrentEnemies().empty())
+            if (roundState == RoundState::Baccarat && complex.getCurrentEnemies().empty())
             {
-                complex.nextFloor();
-                shop.initializeShop(complex.getFloor());
-                chipWealthManager.addWealth(200);
-                restartGame();
+                roundState = RoundState::ChoosingEdge;
+
+                edgeManager.initializeEdges();
+                edgeManager.open();
             }
 
             combatSystem.update();
@@ -384,6 +437,15 @@ class BaccaratState : public GameState
             if (!shop.getShopOpen())
                 window.draw(ui); // draw UI on top of everything else
             window.draw(shop);
+            window.draw(edgeManager);
+            if (roundState == RoundState::NextFloor)
+            {
+                sf::RectangleShape dim({ 1600.f, 900.f });
+                dim.setFillColor(sf::Color(0, 0, 0, 200));
+                window.draw(dim);
+
+                window.draw(ui.floorText);
+            }
         }
 
         void restartGame()
