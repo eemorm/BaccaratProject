@@ -40,4 +40,25 @@ namespace EdgeDB
         EdgeType::Interest,
         100.f
     };
+    inline Edge Parasite
+    {
+        "Parasite",
+        "Extra 15 Health for Every Heal",
+        EdgeType::Healing,
+        15.f
+    };
+    inline Edge YardSale
+    {
+        "Yard Sale",
+        "5% Off of Every Shop Item (Excluding Attacks)",
+        EdgeType::MoneyOff,
+        0.05f
+    };
+    inline Edge BloodyKey
+    {
+        "Bloody Key",
+        "5% Off of Attacks",
+        EdgeType::MoneyOff,
+        0.05f
+    };
 }

@@ -6,10 +6,12 @@
 enum class EdgeType
 {
     MaxHealth,
+    Healing,
     BankerChipReturn,
     TieChipReturn,
     PlayerChipReturn,
-    Interest
+    Interest,
+    MoneyOff
 };
 
 struct Edge

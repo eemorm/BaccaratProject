@@ -24,7 +24,10 @@ private:
         EdgeDB::BankersBuff,
         EdgeDB::TiedKnot,
         EdgeDB::PlayersBuff,
-        EdgeDB::Monopoly
+        EdgeDB::Monopoly,
+        EdgeDB::Parasite,
+        EdgeDB::YardSale,
+        EdgeDB::BloodyKey
     };
 
     std::vector<Edge> edges;
@@ -41,7 +44,6 @@ public:
     bool hasSelection() const { return selectedIndex != -1; }
     Edge& getSelectedEdge() { return edges[selectedIndex]; }
 
-    // Pick 2 random edges
     void initializeEdges()
     {
         edges.clear();

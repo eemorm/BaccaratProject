@@ -3,6 +3,7 @@
 // Custom Includes
 #include "Inventory.hpp"
 #include "WealthManager.hpp"
+#include "PlayerStats.hpp"
 #include "../UI/Elements/UIButton.hpp"
 
 // SFML
@@ -33,6 +34,8 @@ class Shop : public sf::Drawable
             &ItemDB::LargePotion
         };
 
+        PlayerStats& playerStats;
+
         //---UI---
         UIButton shopButton;
         bool shopOpen = false;
@@ -41,9 +44,10 @@ class Shop : public sf::Drawable
         int hoveredIndex = -1;
         bool isHovering = false;
     public:
-        Shop(Inventory* inv, WealthManager* cwm) :
+        Shop(Inventory* inv, WealthManager* cwm, PlayerStats& ps) :
             playerInventory(inv),
             chipWealthManager(cwm),
+            playerStats(ps),
             shopButton(
                 sf::Vector2f(1146, 150),
                 sf::Vector2f(200, 50),
@@ -70,6 +74,14 @@ class Shop : public sf::Drawable
             if (scaled->heal > 0)
                 scaled->heal += scaleFactor * 3;
 
+            scaled->price *= (1 - playerStats.getShopPercentOffBonus());
+
+            return scaled;
+        }
+        std::unique_ptr<ItemData> scaleAttack(ItemData* base)
+        {
+            auto scaled = std::make_unique<ItemData>(*base);
+            scaled->price *= (1 - playerStats.getAttackPercentOffBonus());
             return scaled;
         }
         void initializeShop(int floor) 
@@ -96,7 +108,8 @@ class Shop : public sf::Drawable
                 auto scaled = scaleItem(candidates[i], floor);
                 availableItems.push_back(scaled.release());
             }
-            availableItems.push_back(itemPool[0]);
+            auto scaledAttack = scaleAttack(itemPool[0]);
+            availableItems.push_back(scaledAttack.release());
         }
         void addItem(ItemData* data) { availableItems.push_back(data); }
         void buyItem(int index) 

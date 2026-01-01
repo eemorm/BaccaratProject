@@ -116,7 +116,7 @@ class BaccaratState : public GameState
             game(deck, playerStats),
             playerHealth(100.f, playerStats),
             inventory(&playerHealth),
-            shop(&inventory, &chipWealthManager),
+            shop(&inventory, &chipWealthManager, playerStats),
             playerCombat(&inventory),
             combatSystem(&complex, &playerCombat, &playerHealth)
         { 
@@ -130,7 +130,7 @@ class BaccaratState : public GameState
 
             //---SET UP WEALTH MANAGER---
             chipWealthManager.initializeManager();
-            chipWealthManager.setWealth(385);
+            chipWealthManager.setWealth(2000);
 
             //---PREPARE GAME OBJECTS---
             deck.setPosition({1100, 600});
