@@ -194,7 +194,7 @@ class BaccaratState : public GameState
 
                     complex.nextFloor();
                     shop.initializeShop(complex.getFloor());
-                    chipWealthManager.addWealth(200);
+                    chipWealthManager.addWealth(200 + playerStats.getFloorMoneyReturnBonus());
                 }
 
                 return;

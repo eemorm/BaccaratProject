@@ -10,11 +10,13 @@ class PlayerStats
         float bankerReturnMultiplierBonus = 0.f;
         float tieReturnMultiplierBonus = 0.f;
         float playerReturnMultiplierBonus = 0.f;
+        float floorMoneyReturnBonus = 0.f;
 
         float getMaxHealthBonus() { return maxHealthBonus; }
         float getBankerReturnMultiplierBonus() { return bankerReturnMultiplierBonus; }
         float getTieReturnMultiplierBonus() { return tieReturnMultiplierBonus; }
         float getPlayerReturnMultiplierBonus() { return playerReturnMultiplierBonus; }
+        float getFloorMoneyReturnBonus() { return floorMoneyReturnBonus; }
 
         void applyEdge(Edge& edge)
         {
@@ -32,8 +34,9 @@ class PlayerStats
                 case EdgeType::PlayerChipReturn:
                     playerReturnMultiplierBonus += edge.value;
                     break;
-
-
+                case EdgeType::Interest:
+                    floorMoneyReturnBonus += edge.value;
+                    break;
             }
         }
 };

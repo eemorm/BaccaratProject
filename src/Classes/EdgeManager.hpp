@@ -23,7 +23,8 @@ private:
         EdgeDB::FleshShield,
         EdgeDB::BankersBuff,
         EdgeDB::TiedKnot,
-        EdgeDB::PlayersBuff
+        EdgeDB::PlayersBuff,
+        EdgeDB::Monopoly
     };
 
     std::vector<Edge> edges;

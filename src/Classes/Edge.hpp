@@ -9,6 +9,7 @@ enum class EdgeType
     BankerChipReturn,
     TieChipReturn,
     PlayerChipReturn,
+    Interest
 };
 
 struct Edge

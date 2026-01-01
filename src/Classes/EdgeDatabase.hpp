@@ -15,9 +15,9 @@ namespace EdgeDB
     inline Edge BankersBuff
     {
         "Banker's Buff",
-        "+0.2x Return on Banker",
+        "+0.3x Return on Banker",
         EdgeType::BankerChipReturn,
-        0.2f
+        0.3f
     };
     inline Edge TiedKnot
     {
@@ -29,8 +29,15 @@ namespace EdgeDB
     inline Edge PlayersBuff
     {
         "Players's Buff",
-        "+0.2x Return on Player",
+        "+0.3x Return on Player",
         EdgeType::PlayerChipReturn,
-        0.2f
+        0.3f
+    };
+    inline Edge Monopoly
+    {
+        "Monopoly",
+        "+$100 Gained Extra Per Floor",
+        EdgeType::Interest,
+        100.f
     };
 }
