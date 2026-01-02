@@ -42,8 +42,8 @@ class Complex
 
             int scaledFloor = floor - 1;
 
-            scaledData->maxHealth += scaledFloor * 5;    
-            scaledData->attackDamage += scaledFloor * 2;
+            scaledData->maxHealth += scaledFloor * 4;    
+            scaledData->attackDamage += scaledFloor * 1;
             scaledData->armorValue += scaledFloor;
 
             return std::make_unique<Enemy>(std::move(scaledData));

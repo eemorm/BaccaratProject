@@ -52,7 +52,7 @@ public:
 
         std::shuffle(pool.begin(), pool.end(), rng);
 
-        int count = std::min(2, (int)pool.size());
+        int count = std::min(3, (int)pool.size());
         edges.assign(pool.begin(), pool.begin() + count);
     }
 
@@ -73,7 +73,7 @@ public:
                 edges[i].description
             );
 
-            t.setPosition(420.f, 280.f + i * 110.f);
+            t.setPosition(500.f, 240.f + i * 110.f);
             texts.push_back(t);
         }
     }
