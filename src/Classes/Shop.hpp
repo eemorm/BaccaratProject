@@ -192,8 +192,9 @@ class Shop : public sf::Drawable
                     target.draw(slot);
 
                     sf::Sprite icon;
-                    icon.setTexture(availableItems[i]->sprite);
+                    icon.setTexture(*availableItems[i]->texture);
                     icon.setPosition(slot.getPosition());
+                    icon.setScale(2.5f, 2.5f);
                     target.draw(icon);
                 }
 
@@ -202,26 +203,85 @@ class Shop : public sf::Drawable
                     ItemData* item = availableItems[hoveredIndex];
 
                     sf::RectangleShape tooltip;
-                    tooltip.setSize({300, 140});
+                    tooltip.setSize({900, 150});
                     tooltip.setFillColor(sf::Color(30, 30, 30, 220));
                     tooltip.setOutlineThickness(2);
                     tooltip.setOutlineColor(sf::Color::White);
-                    tooltip.setPosition(20, 120);
+                    tooltip.setPosition(20, 600);
                     target.draw(tooltip);
 
                     sf::Text name(item->name, font, 18);
-                    name.setPosition(30, 130);
+                    name.setPosition(30, 610);
                     name.setFillColor(sf::Color::White);
                     target.draw(name);
 
                     sf::Text price("Price: $" + std::to_string(item->price), font, 14);
-                    price.setPosition(30, 155);
+                    price.setPosition(30, 635);
                     target.draw(price);
 
                     sf::Text desc(item->description, font, 14);
-                    desc.setPosition(30, 175);
+                    desc.setPosition(30, 655);
                     desc.setLineSpacing(1.1f);
                     target.draw(desc);
+
+                    float statY = 655 + desc.getLocalBounds().height + 8.f;
+
+                    // ---------- STAT COMPARISON ----------
+                    if (item->type == ItemType::Weapon)
+                    {
+                        int currentDamage = 0;
+                        if (auto* weapon = playerInventory->getEquippedWeapon())
+                            currentDamage = weapon->getData()->damage;
+
+                        int diff = item->damage - currentDamage;
+
+                        sf::Text dmgText(
+                            "Damage: " + std::to_string(item->damage) +
+                            (diff != 0 ? " (" + std::string(diff > 0 ? "+" : "") + std::to_string(diff) + ")" : ""),
+                            font,
+                            14
+                        );
+
+                        dmgText.setPosition(30, statY);
+                        dmgText.setFillColor(diff > 0 ? sf::Color::Green :
+                                            diff < 0 ? sf::Color::Red :
+                                                        sf::Color::White);
+
+                        target.draw(dmgText);
+                    }
+                    else if (item->type == ItemType::Armor)
+                    {
+                        int currentArmor = 0;
+                        if (auto* armor = playerInventory->getEquippedArmor())
+                            currentArmor = armor->getData()->armorValue;
+
+                        int diff = item->armorValue - currentArmor;
+
+                        sf::Text armorText(
+                            "Armor: " + std::to_string(item->armorValue) +
+                            (diff != 0 ? " (" + std::string(diff > 0 ? "+" : "") + std::to_string(diff) + ")" : ""),
+                            font,
+                            14
+                        );
+
+                        armorText.setPosition(30, statY);
+                        armorText.setFillColor(diff > 0 ? sf::Color::Green :
+                                                diff < 0 ? sf::Color::Red :
+                                                        sf::Color::White);
+
+                        target.draw(armorText);
+                    }
+                    else if (item->type == ItemType::Consumable)
+                    {
+                        sf::Text healText(
+                            "Heals: " + std::to_string(item->heal) + " HP",
+                            font,
+                            14
+                        );
+                        healText.setPosition(30, statY);
+                        healText.setFillColor(sf::Color::Green);
+                        target.draw(healText);
+                    }
                 }
             }
             target.draw(shopButton);

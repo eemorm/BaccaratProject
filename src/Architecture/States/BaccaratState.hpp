@@ -452,7 +452,7 @@ class BaccaratState : public GameState
 
             if (!shop.getShopOpen())
                 window.draw(ui); // draw UI on top of everything else
-            if (ui.showEnemyStats)
+            if (ui.showEnemyStats && !shop.getShopOpen())
             {
                 window.draw(ui.enemyHealthBar);
                 window.draw(ui.enemyName);

@@ -1,6 +1,7 @@
 #pragma once
 
 // Custom Includes
+#include "../textures.hpp"
 #include "Item.hpp"
 
 namespace ItemDB 
@@ -11,6 +12,7 @@ namespace ItemDB
         .description = "A dagger. Used for slashing foes.",
         .price = 50,
         .type = ItemType::Weapon,
+        .texture = &daggerTexture,
         .damage = 7,
         .armorValue = 0,
         .heal = 0,
@@ -22,7 +24,8 @@ namespace ItemDB
         .description = "A sword, once used in a great war.",
         .price = 135,
         .type = ItemType::Weapon,
-        .damage = 9,
+        .texture = &swordTexture,
+        .damage = 10,
         .armorValue = 0,
         .heal = 0,
         .minFloor = 3
@@ -33,6 +36,7 @@ namespace ItemDB
         .description = "A thick card that can heftly slice enemies.",
         .price = 650,
         .type = ItemType::Weapon,
+        .texture = &throwingCardTexture,
         .damage = 15,
         .armorValue = 0,
         .heal = 0,
@@ -44,6 +48,7 @@ namespace ItemDB
         .description = "A strong vest that protects against many wounds.",
         .price = 750,
         .type = ItemType::Armor,
+        .texture = &vestTexture,
         .damage = 0,
         .armorValue = 2,
         .heal = 0,
@@ -55,6 +60,7 @@ namespace ItemDB
         .description = "A shirt of chainmail, with slight rust.",
         .price = 1500,
         .type = ItemType::Armor,
+        .texture = &chainmailTexture,
         .damage = 0,
         .armorValue = 4,
         .heal = 0,
@@ -66,6 +72,7 @@ namespace ItemDB
         .description = "Stolen from a guard. A thick coat.",
         .price = 2500,
         .type = ItemType::Armor,
+        .texture = &vestTexture,
         .damage = 0,
         .armorValue = 7,
         .heal = 0,
@@ -77,6 +84,7 @@ namespace ItemDB
         .description = "Heals a small amount.",
         .price = 130,
         .type = ItemType::Consumable,
+        .texture = &potionTexture,
         .damage = 0,
         .armorValue = 0,
         .heal = 20,
@@ -88,6 +96,7 @@ namespace ItemDB
         .description = "Heals a good amount.",
         .price = 250,
         .type = ItemType::Consumable,
+        .texture = &largePotionTexture,
         .damage = 0,
         .armorValue = 0,
         .heal = 40,
@@ -99,6 +108,7 @@ namespace ItemDB
         .description = "Allows an attack.",
         .price = 100,
         .type = ItemType::Attack,
+        .texture = &daggerTexture,
         .damage = 0,
         .armorValue = 0,
         .heal = 0,

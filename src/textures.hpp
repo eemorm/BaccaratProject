@@ -30,7 +30,13 @@ inline sf::Texture chipsTexture;
 inline sf::Texture insectTexture;
 inline sf::Texture ratTexture;
 inline sf::Texture reaperTexture;
-
+inline sf::Texture daggerTexture;
+inline sf::Texture swordTexture;
+inline sf::Texture throwingCardTexture;
+inline sf::Texture vestTexture;
+inline sf::Texture chainmailTexture;
+inline sf::Texture potionTexture;
+inline sf::Texture largePotionTexture;
 
 // ---SPRITES---
 inline sf::Sprite table;
@@ -82,6 +88,20 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     if (!ratTexture.loadFromFile("textures/Enemies/rat.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!reaperTexture.loadFromFile("textures/Enemies/reaper.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!daggerTexture.loadFromFile("textures/Items/dagger.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!swordTexture.loadFromFile("textures/Items/sword.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!throwingCardTexture.loadFromFile("textures/Items/throwingcard.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!vestTexture.loadFromFile("textures/Items/vest.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!chainmailTexture.loadFromFile("textures/Items/chainmail.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; } 
+    if (!potionTexture.loadFromFile("textures/Items/potion.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!largePotionTexture.loadFromFile("textures/Items/largepotion.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
 
     // ---SET TEXTURES INTO SPRITES---

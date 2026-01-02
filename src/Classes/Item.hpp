@@ -16,7 +16,7 @@ struct ItemData
     std::string description;
     int price;
     ItemType type;
-    sf::Texture sprite;
+    sf::Texture* texture;
     int damage;
     int armorValue;
     int heal;
