@@ -338,12 +338,19 @@ class BaccaratState : public GameState
             bool hoveringEnemy = false;
             bool hoveringChip = false;
             int chipHoverValue = 0;
+            sf::Vector2f enemyPos;
+            int enemyCurrentHealth;
+            int enemyMaxHealth;
 
             for (auto& enemy : complex.getCurrentEnemies())
             {
-                if (enemy->getBody().getGlobalBounds().contains(mousePos))
+                if (enemy->getSprite().getGlobalBounds().contains(mousePos))
                 {
                     hoveringEnemy = true;
+                    ui.enemyName.setString(enemy->getData()->name);
+                    enemyPos = enemy->getSprite().getPosition();
+                    enemyCurrentHealth = enemy->getCurrentHealth();
+                    enemyMaxHealth = enemy->getMaxHealth();
                     break;
                 }
             }
@@ -358,10 +365,14 @@ class BaccaratState : public GameState
                 }
             }
 
-            if (hoveringEnemy && inventory.getAttacks() > 0)
-                ui.cursorText.setString("ATTACK");
-            else if (hoveringEnemy)
-                ui.cursorText.setString("NEED ATTACKS");
+            if (hoveringEnemy)
+            {
+                ui.showEnemyStats = true;
+                if (inventory.getAttacks() > 0)
+                    ui.cursorText.setString("ATTACK");
+                else
+                    ui.cursorText.setString("NEED ATTACKS");
+            }
             else if (hoveringChip)
                 ui.cursorText.setString("$" + std::to_string(chipHoverValue));
             else
@@ -371,7 +382,12 @@ class BaccaratState : public GameState
             ui.moneyText.setString("Bet: $" + std::to_string(game.getBetAmount()) + "\nWealth: $" + std::to_string(chipWealthManager.getWealth()));
             ui.attacksText.setString("Attacks: " + std::to_string(inventory.getAttacks()));
             ui.winText.setString(game.resultToString());
+            ui.healthText.setString(std::to_string(playerHealth.getCurrentHealth()) + "/" + std::to_string(playerHealth.getMaxHealth()));
             ui.healthBar.updateBar(playerHealth.getCurrentHealth());
+
+            ui.enemyName.setPosition(enemyPos + sf::Vector2f(10.f, -55.f));
+            ui.enemyHealthBar.setPosition(enemyPos + sf::Vector2f(10.f, -25.f));
+            ui.enemyHealthBar.updateBarWithMax(enemyCurrentHealth, enemyMaxHealth);
         }
         // draws everything to the screen
         inline void draw(sf::RenderWindow& window) override
@@ -436,11 +452,16 @@ class BaccaratState : public GameState
 
             if (!shop.getShopOpen())
                 window.draw(ui); // draw UI on top of everything else
+            if (ui.showEnemyStats)
+            {
+                window.draw(ui.enemyHealthBar);
+                window.draw(ui.enemyName);
+            }
             window.draw(shop);
             window.draw(edgeManager);
             if (roundState == RoundState::NextFloor)
             {
-                sf::RectangleShape dim({ 1600.f, 900.f });
+                sf::RectangleShape dim({ SCREEN_WIDTH, SCREEN_HEIGHT });
                 dim.setFillColor(sf::Color(0, 0, 0, 200));
                 window.draw(dim);
 

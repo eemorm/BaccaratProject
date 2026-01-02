@@ -31,11 +31,17 @@ class UIBar : public UIElement
             bar.setFillColor(color);
             bar.setPosition(position);
         }
+        void setPosition(sf::Vector2f p) { background.setPosition(p); bar.setPosition(p); }
         void handleEvent(sf::Event& e, sf::Vector2f& mouse) override {}
         void updateBar(float currentValue)
         {
             value = std::max(currentValue, 0.f);
             bar.setSize({(value/maxValue) * fullSize.x, fullSize.y});
+        }
+        void updateBarWithMax(float currentValue, float maxHealth)
+        {
+            value = std::max(currentValue, 0.f);
+            bar.setSize({(value/maxHealth) * fullSize.x, fullSize.y});
         }
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override 
         {

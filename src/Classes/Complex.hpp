@@ -75,7 +75,7 @@ class Complex
                 EnemyData* templateData = candidates[dist(rng)];
                 auto enemy = spawnEnemyFromTemplate(templateData, floor);
 
-                enemy->setPosition({ 300.f + i * 60.f, 300.f });
+                enemy->setPosition({ 275.f + i * 100.f, 275.f });
                 currentEnemies.push_back(std::move(enemy));
             }
         }

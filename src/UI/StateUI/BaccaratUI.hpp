@@ -21,6 +21,7 @@ class BaccaratUI : public sf::Drawable
             target.draw(attacksText, states);
             target.draw(winText, states);
             target.draw(payoutText, states);
+            target.draw(healthText, states);
         }
     public:
         sf::Text cursorText;
@@ -29,9 +30,14 @@ class BaccaratUI : public sf::Drawable
         sf::Text winText;
         sf::Text payoutText;
         sf::Text floorText;
+        sf::Text healthText;
         UIButton& confirmBetButton;
         UIButton& restartGameButton;
         UIBar& healthBar;
+
+        bool showEnemyStats;
+        sf::Text enemyName;
+        UIBar& enemyHealthBar;
     
         BaccaratUI() : confirmBetButton(ui.add<UIButton>
             (
@@ -52,7 +58,8 @@ class BaccaratUI : public sf::Drawable
                     
                 }
             )),
-            healthBar(ui.add<UIBar>(sf::Vector2f(20, 85), sf::Vector2f(150, 25), 100.f, sf::Color::Green))
+            healthBar(ui.add<UIBar>(sf::Vector2f(20, 85), sf::Vector2f(150, 25), 100.f, sf::Color::Green)),
+            enemyHealthBar(ui.add<UIBar>(sf::Vector2f(20, 85), sf::Vector2f(60, 25), 100.f, sf::Color::Red))
         {
             cursorText.setFont(font);
             cursorText.setCharacterSize(24);
@@ -86,6 +93,17 @@ class BaccaratUI : public sf::Drawable
             floorText.setCharacterSize(64);
             floorText.setFillColor(sf::Color::White);
             floorText.setStyle(sf::Text::Bold);
+
+            healthText.setFont(font);
+            healthText.setCharacterSize(24);
+            healthText.setFillColor(sf::Color::Black);
+            healthText.setPosition(58.f, 82.f);
+
+            enemyName.setFont(font);
+            enemyName.setCharacterSize(24);
+            enemyName.setFillColor(sf::Color::Red);
+            enemyName.setOutlineColor(sf::Color::Black);
+            enemyName.setOutlineThickness(2.f);
         }
         void handleEvent(sf::Event& event, sf::Vector2f mouse) { ui.handleEvent(event, mouse); }
         void update(float dt) { ui.update(dt); }

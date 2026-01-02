@@ -17,13 +17,9 @@ inline std::vector<std::unique_ptr<sf::Music>> baccarat1;
 // SFX
 inline std::vector<std::unique_ptr<sf::SoundBuffer>> cardDrawBuffers;
 inline std::vector<std::unique_ptr<sf::SoundBuffer>> shuffleBuffers;
-inline std::vector<std::unique_ptr<sf::SoundBuffer>> buttonPressBuffers;
-inline std::vector<std::unique_ptr<sf::SoundBuffer>> buttonReleaseBuffers;
 
 inline std::vector<std::unique_ptr<sf::Sound>> cardDrawSounds;
 inline std::vector<std::unique_ptr<sf::Sound>> shuffleSounds;
-inline std::vector<std::unique_ptr<sf::Sound>> buttonPressSounds;
-inline std::vector<std::unique_ptr<sf::Sound>> buttonReleaseSounds;
 
 inline void addSFX(
     const std::string& path,
@@ -50,6 +46,7 @@ inline void loadAudio()
     std::unique_ptr<sf::Music> m_sketch2 = std::make_unique<sf::Music>();
     std::unique_ptr<sf::Music> m_daria = std::make_unique<sf::Music>();
     std::unique_ptr<sf::Music> m_ca2 = std::make_unique<sf::Music>();
+    std::unique_ptr<sf::Music> m_dark2 = std::make_unique<sf::Music>();
 
     if (!m_maintheme->openFromFile("audio/music/maintheme.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_falling->openFromFile("audio/music/falling.mp3")) { std::cout << "Failed to load audio file"; }
@@ -57,6 +54,7 @@ inline void loadAudio()
     if (!m_sketch2->openFromFile("audio/music/sketch2.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_daria->openFromFile("audio/music/dariacore3.mp3")) { std::cout << "Failed to load audio file"; }
     if (!m_ca2->openFromFile("audio/music/CA2.mp3")) { std::cout << "Failed to load audio file"; }
+    if (!m_dark2->openFromFile("audio/music/dark2.mp3")) { std::cout << "Failed to load audio file"; }
 
     m_maintheme->setLoop(true);
     m_maintheme->setVolume(10.f);
@@ -76,11 +74,14 @@ inline void loadAudio()
     m_ca2->setLoop(true);
     m_ca2->setVolume(10.f);
 
+    m_dark2->setLoop(true);
+    m_dark2->setVolume(10.f);
+
     baccarat1.push_back(std::move(m_Space));
     baccarat1.push_back(std::move(m_sketch2));
     baccarat1.push_back(std::move(m_daria));
     baccarat1.push_back(std::move(m_ca2));
-
+    baccarat1.push_back(std::move(m_dark2));
 
     // SFX
     // --------------------
@@ -97,26 +98,6 @@ inline void loadAudio()
     // --------------------
     addSFX("audio/sfx/shuffledeck1.wav", shuffleBuffers, shuffleSounds);
     addSFX("audio/sfx/shuffledeck2.wav", shuffleBuffers, shuffleSounds);
-
-    // --------------------
-    // BUTTON PRESS
-    // --------------------
-    addSFX("audio/sfx/buttonpress1.wav", buttonPressBuffers, buttonPressSounds);
-    addSFX("audio/sfx/buttonpress2.wav", buttonPressBuffers, buttonPressSounds);
-    addSFX("audio/sfx/buttonpress3.wav", buttonPressBuffers, buttonPressSounds);
-    addSFX("audio/sfx/buttonpress4.wav", buttonPressBuffers, buttonPressSounds);
-    addSFX("audio/sfx/buttonpress5.wav", buttonPressBuffers, buttonPressSounds);
-    addSFX("audio/sfx/buttonpress6.wav", buttonPressBuffers, buttonPressSounds);
-
-    // --------------------
-    // BUTTON RELEASE
-    // --------------------
-    addSFX("audio/sfx/buttonrelease1.wav", buttonReleaseBuffers, buttonReleaseSounds);
-    addSFX("audio/sfx/buttonrelease2.wav", buttonReleaseBuffers, buttonReleaseSounds);
-    addSFX("audio/sfx/buttonrelease3.wav", buttonReleaseBuffers, buttonReleaseSounds);
-    addSFX("audio/sfx/buttonrelease4.wav", buttonReleaseBuffers, buttonReleaseSounds);
-    addSFX("audio/sfx/buttonrelease5.wav", buttonReleaseBuffers, buttonReleaseSounds);
-    addSFX("audio/sfx/buttonrelease6.wav", buttonReleaseBuffers, buttonReleaseSounds);
 }
 
 inline void playRandom(std::vector<std::unique_ptr<sf::Music>>& tracks)

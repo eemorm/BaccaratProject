@@ -24,6 +24,7 @@ class MainMenuState : public GameState
 
         sf::RectangleShape background;
         sf::Text titleText;
+        sf::Text copyrightText;
         UIButton playButton;
         UIButton quitButton;
     public:
@@ -61,6 +62,15 @@ class MainMenuState : public GameState
             titleText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
             titleText.setPosition(SCREEN_WIDTH / 2.f, 200.f);
 
+            copyrightText.setFont(font);
+            copyrightText.setString("Copyright 2026 by Memento Studios");
+            copyrightText.setCharacterSize(24);
+            copyrightText.setFillColor(sf::Color::White);
+
+            bounds = copyrightText.getLocalBounds();
+            copyrightText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+            copyrightText.setPosition(1165, 725.f);
+
             stopAllMusic();
             m_maintheme->play();
         }
@@ -81,6 +91,7 @@ class MainMenuState : public GameState
         {
             window.draw(background);
             window.draw(titleText);
+            window.draw(copyrightText);
             window.draw(playButton);
             window.draw(quitButton);
         }

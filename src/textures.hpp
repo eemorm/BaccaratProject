@@ -27,6 +27,10 @@ inline sf::Texture theDealerNumbersTexture;
 inline sf::Texture theDealerSuitsTexture;
 inline sf::Texture theDealerTexture;
 inline sf::Texture chipsTexture;
+inline sf::Texture insectTexture;
+inline sf::Texture ratTexture;
+inline sf::Texture reaperTexture;
+
 
 // ---SPRITES---
 inline sf::Sprite table;
@@ -72,6 +76,12 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     if (!theDealerTexture.loadFromFile("textures/Dealers/theDealer.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!chipsTexture.loadFromFile("textures/Core/chips.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!insectTexture.loadFromFile("textures/Enemies/insect.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!ratTexture.loadFromFile("textures/Enemies/rat.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!reaperTexture.loadFromFile("textures/Enemies/reaper.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
 
     // ---SET TEXTURES INTO SPRITES---

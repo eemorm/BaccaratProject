@@ -73,7 +73,7 @@ class CombatSystem
 
             for (auto& enemy : complex->getCurrentEnemies())
             {
-                if (enemy->getBody().getGlobalBounds().contains(mousePos) &&
+                if (enemy->getSprite().getGlobalBounds().contains(mousePos) &&
                     playerCombat->getPlayerInventory().getAttacks() > 0)
                 {
                     clickedEnemy = enemy.get();
