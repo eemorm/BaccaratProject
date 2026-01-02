@@ -11,7 +11,22 @@ void GameStateManager::changeState(StateID id, sf::RenderWindow& window)
             currentState = std::make_unique<MainMenuState>(window, this);
             break;
         case StateID::Baccarat:
-            currentState = std::make_unique<BaccaratState>(window, this);
+            currentState = std::make_unique<BaccaratState>(window, this, false);
+            break;
+        case StateID::Death:
+            currentState = std::make_unique<DeathState>(window, this);
+            break;
+    }
+}
+void GameStateManager::changeState(StateID id, sf::RenderWindow& window, bool tutorial)
+{
+    switch (id)
+    {
+        case StateID::MainMenu:
+            currentState = std::make_unique<MainMenuState>(window, this);
+            break;
+        case StateID::Baccarat:
+            currentState = std::make_unique<BaccaratState>(window, this, tutorial);
             break;
         case StateID::Death:
             currentState = std::make_unique<DeathState>(window, this);

@@ -26,6 +26,7 @@ class MainMenuState : public GameState
         sf::Text titleText;
         sf::Text copyrightText;
         UIButton playButton;
+        UIButton tutorialButton;
         UIButton quitButton;
     public:
         inline MainMenuState(sf::RenderWindow& w, GameStateManager* gsm) : 
@@ -37,11 +38,20 @@ class MainMenuState : public GameState
                 "Play",
                 font,
                 [&]() {
-                    states->changeState(StateID::Baccarat, window);
+                    states->changeState(StateID::Baccarat, window, false);
+                }
+            ),
+            tutorialButton(
+                sf::Vector2f(SCREEN_WIDTH/2 - 100, 475),
+                sf::Vector2f(200, 50),
+                "Tutorial",
+                font,
+                [&]() {
+                    states->changeState(StateID::Baccarat, window, true);
                 }
             ),
             quitButton(
-                sf::Vector2f(SCREEN_WIDTH/2 - 100, 500),
+                sf::Vector2f(SCREEN_WIDTH/2 - 100, 550),
                 sf::Vector2f(200, 50),
                 "Quit",
                 font,
@@ -80,11 +90,13 @@ class MainMenuState : public GameState
             sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
             playButton.handleEvent(event, mousePos);
+            tutorialButton.handleEvent(event, mousePos);
             quitButton.handleEvent(event, mousePos);
         }
         inline void update(float dt) override
         {
             playButton.update(dt);
+            tutorialButton.update(dt);
             quitButton.update(dt);
         }
         inline void draw(sf::RenderWindow& window) override
@@ -93,6 +105,7 @@ class MainMenuState : public GameState
             window.draw(titleText);
             window.draw(copyrightText);
             window.draw(playButton);
+            window.draw(tutorialButton);
             window.draw(quitButton);
         }
 };

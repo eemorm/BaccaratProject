@@ -36,7 +36,7 @@ class DeathState : public GameState
                 "Try Again",
                 font,
                 [&]() {
-                    states->changeState(StateID::Baccarat, window);
+                    states->changeState(StateID::Baccarat, window, false);
                 }
             ),
             mainMenuButton(

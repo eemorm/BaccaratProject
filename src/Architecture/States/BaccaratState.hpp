@@ -19,8 +19,10 @@
 #include "../../Classes/PlayerStats.hpp"
 #include "../../Classes/CombatSystem.hpp"
 #include "../../Classes/EdgeManager.hpp"
+#include "../../Classes/TutorialController.hpp"
 #include "../../Classes/LightSystem.hpp"
 #include "../../UI/StateUI/BaccaratUI.hpp"
+#include "../../UI/Elements/SpeechBox.hpp"
 #include "../../audio.hpp"
 
 // SFML
@@ -104,11 +106,16 @@ class BaccaratState : public GameState
         BaccaratUI ui;
         sf::Clock floorTransitionClock;
 
+        //---TUTORIAL---
+        bool showTutorial;
+        TutorialController tutorial;
+        SpeechBox dealerSpeech;
+
         //---MISC---
         sf::Vector2f mousePos; // mouse position
     public:
         // constructor, initializes objects that don't have default constructors
-        inline BaccaratState(sf::RenderWindow& w, GameStateManager* gsm) : 
+        inline BaccaratState(sf::RenderWindow& w, GameStateManager* gsm, bool st) : 
             window(w),
             states(gsm),
             lighting(SCREEN_WIDTH, SCREEN_HEIGHT),
@@ -118,7 +125,8 @@ class BaccaratState : public GameState
             inventory(&playerHealth),
             shop(&inventory, &chipWealthManager, playerStats),
             playerCombat(&inventory),
-            combatSystem(&complex, &playerCombat, &playerHealth)
+            combatSystem(&complex, &playerCombat, &playerHealth),
+            showTutorial(st)
         { 
             //---CREATE RENDER TEXTURES---
             lightingRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -169,6 +177,13 @@ class BaccaratState : public GameState
             ui.confirmBetButton.setOnClick([this]() { if (game.getGamePhase() == BaccaratPhase::Betting && game.getBetAmount() > 0) { game.closeBetting(); ui.confirmBetButton.setActive(false); }});
             ui.restartGameButton.setOnClick([this]() { restartGame(); ui.restartGameButton.setActive(false); });
             ui.restartGameButton.setActive(false);
+
+            if (showTutorial) 
+            {
+                tutorial.start();
+                dealerSpeech.setText(tutorial.getText());
+                dealerSpeech.setAnchor(theDealer.getPosition() + sf::Vector2f(160, -120));
+            }
 
             game.startRound(); // start the round of baccarat
             stopAllMusic();
@@ -268,6 +283,27 @@ class BaccaratState : public GameState
         // updates every frame with respect to delta time
         inline void update(float dt) override
         {
+            static std::string lastText;
+            tutorial.update(dt);
+
+            if (showTutorial && tutorial.isActive())
+            {
+                std::string currentText = tutorial.getText();
+                if (currentText != lastText) 
+                {
+                    dealerSpeech.setText(currentText);
+                    dealerSpeech.setAnchor(theDealer.getPosition() + sf::Vector2f(160, -120));
+                    lastText = currentText;
+                }
+                dealerSpeech.update(dt);
+            }
+
+            if (showTutorial && !tutorial.isActive())
+            {
+                states->changeState(StateID::MainMenu, window);
+                return;
+            }
+
             if (roundState == RoundState::NextFloor)
             {
                 sf::FloatRect bounds = ui.floorText.getLocalBounds();
@@ -310,10 +346,16 @@ class BaccaratState : public GameState
                     ui.payoutText.setString("Payout: $" + std::to_string(winnings));
                     if (chipWealthManager.getWealth() > 0)
                         ui.restartGameButton.setActive(true);
-                    else if (chipWealthManager.getWealth() == 0)
+                    else if (chipWealthManager.getWealth() == 0 && !showTutorial)
                     {
                         states->changeState(StateID::Death, window);
                         return;
+                    }
+                    else if (showTutorial)
+                    {
+                        chipWealthManager.addWealth(2000);
+                        ui.payoutText.setString("You tried to lose.");
+                        ui.restartGameButton.setActive(true);
                     }
                 }
             }
@@ -328,7 +370,7 @@ class BaccaratState : public GameState
 
             combatSystem.update();
 
-            if (playerHealth.getCurrentHealth() <= 0)
+            if (playerHealth.getCurrentHealth() <= 0 && !showTutorial)
             {
                 states->changeState(StateID::Death, window);
                 return;
@@ -456,6 +498,10 @@ class BaccaratState : public GameState
             {
                 window.draw(ui.enemyHealthBar);
                 window.draw(ui.enemyName);
+            }
+            if (showTutorial && tutorial.isActive())
+            {
+                window.draw(dealerSpeech);
             }
             window.draw(shop);
             window.draw(edgeManager);

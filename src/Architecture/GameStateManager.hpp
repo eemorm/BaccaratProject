@@ -30,6 +30,7 @@ class GameStateManager
         std::unique_ptr<GameState> currentState; // keep reference to current game state
     public:
         void changeState(StateID id, sf::RenderWindow& window); // change state in the manager
+        void changeState(StateID id, sf::RenderWindow& window, bool tutorial); // change state in the manager but for baccarat to discern the tutorial vs normal game
 
         void handleEvent(sf::Event& event); // pass event to current state to handle, handle event through a pointer to have polymorphism
         void update(float dt); // update current state with respect to delta time, update through a pointer to have polymorphism
