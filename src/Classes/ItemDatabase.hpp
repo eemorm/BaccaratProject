@@ -25,7 +25,7 @@ namespace ItemDB
         .price = 135,
         .type = ItemType::Weapon,
         .texture = &swordTexture,
-        .damage = 10,
+        .damage = 12,
         .armorValue = 0,
         .heal = 0,
         .minFloor = 3
@@ -37,7 +37,7 @@ namespace ItemDB
         .price = 650,
         .type = ItemType::Weapon,
         .texture = &throwingCardTexture,
-        .damage = 15,
+        .damage = 17,
         .armorValue = 0,
         .heal = 0,
         .minFloor = 6
@@ -78,6 +78,18 @@ namespace ItemDB
         .heal = 0,
         .minFloor = 7
     };
+    inline ItemData Bandage 
+    {
+        .name = "Bandage",
+        .description = "Heals a subordinate amount.",
+        .price = 50,
+        .type = ItemType::Consumable,
+        .texture = &bandageTexture,
+        .damage = 0,
+        .armorValue = 0,
+        .heal = 5,
+        .minFloor = 1
+    };
     inline ItemData Potion 
     {
         .name = "Potion",
@@ -88,7 +100,7 @@ namespace ItemDB
         .damage = 0,
         .armorValue = 0,
         .heal = 20,
-        .minFloor = 1
+        .minFloor = 2
     };
     inline ItemData LargePotion 
     {

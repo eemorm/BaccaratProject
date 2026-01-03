@@ -1,4 +1,4 @@
-project('BaccaratProject', 'cpp', default_options: ['cpp_std=c++17'])
+project('Croupier', 'cpp', default_options: ['cpp_std=c++17'])
 
 cxx = meson.get_compiler('cpp')
 
@@ -40,7 +40,7 @@ endif
 # ---- Executable ----
 # Install EXE directly to prefix (root install folder)
 executable(
-  'BaccaratProject',
+  'Croupier',
   sources,
   dependencies: sfml_deps,
   install: true,

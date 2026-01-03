@@ -74,5 +74,5 @@ jobs:
       - name: Upload EXE + Assets + DLLs
         uses: actions/upload-artifact@v4
         with:
-          name: BaccaratProject-Windows-${{ env.VERSION }}
+          name: Croupier-Windows-${{ env.VERSION }}
           path: build/install/*

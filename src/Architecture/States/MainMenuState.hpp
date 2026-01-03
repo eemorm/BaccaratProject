@@ -64,10 +64,10 @@ class MainMenuState : public GameState
             background.setFillColor(sf::Color(20, 20, 30));
 
             titleText.setFont(font);
-            titleText.setString("BACCARAT PROJECT");
+            titleText.setString("CROUPIER");
             titleText.setCharacterSize(72);
             titleText.setFillColor(sf::Color::White);
-
+ 
             sf::FloatRect bounds = titleText.getLocalBounds();
             titleText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
             titleText.setPosition(SCREEN_WIDTH / 2.f, 200.f);

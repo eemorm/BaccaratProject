@@ -22,9 +22,9 @@ namespace EdgeDB
     inline Edge TiedKnot
     {
         "Tied Knot",
-        "+2x Return on Tie",
+        "+3x Return on Tie",
         EdgeType::TieChipReturn,
-        2.f
+        3.f
     };
     inline Edge PlayersBuff
     {

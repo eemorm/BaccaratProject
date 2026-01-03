@@ -36,6 +36,7 @@ class TutorialController
             "...",
             "Next, is the shop.",
             "You can look at and buy items that are useful in the next part, combat.",
+            "By buying an item, it is automatically equipped or used, regarding its type, rather that be weapon, armor, or consumable."
             "To attack an enemy, you must first buy a weapon to do damage, and attacks so that you may gain the chance to attack.",
             "After doing so, you just have to click on an enemy to attack.",
             "Be careful though *for all I care* as enemies will automatically attack back as soon as one is hit.",

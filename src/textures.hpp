@@ -35,6 +35,7 @@ inline sf::Texture swordTexture;
 inline sf::Texture throwingCardTexture;
 inline sf::Texture vestTexture;
 inline sf::Texture chainmailTexture;
+inline sf::Texture bandageTexture;
 inline sf::Texture potionTexture;
 inline sf::Texture largePotionTexture;
 
@@ -99,6 +100,8 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!chainmailTexture.loadFromFile("textures/Items/chainmail.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; } 
+    if (!bandageTexture.loadFromFile("textures/Items/bandage.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
     if (!potionTexture.loadFromFile("textures/Items/potion.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!largePotionTexture.loadFromFile("textures/Items/largepotion.png")) 

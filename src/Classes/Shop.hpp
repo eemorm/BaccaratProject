@@ -23,7 +23,6 @@ class Shop : public sf::Drawable
         WealthManager* chipWealthManager;
         std::vector<ItemData*> itemPool =
         {
-            &ItemDB::Attack,
             &ItemDB::Dagger,
             &ItemDB::Sword,
             &ItemDB::ThrowingCard,
@@ -95,7 +94,7 @@ class Shop : public sf::Drawable
 
             for (auto* item : itemPool)
             {
-                if (item->minFloor <= floor && item->type != ItemType::Attack)
+                if (item->minFloor <= floor)
                     candidates.push_back(item);
             }
 
@@ -108,8 +107,10 @@ class Shop : public sf::Drawable
                 auto scaled = scaleItem(candidates[i], floor);
                 availableItems.push_back(scaled.release());
             }
-            auto scaledAttack = scaleAttack(itemPool[0]);
+            auto scaledAttack = scaleAttack(&ItemDB::Attack);
             availableItems.push_back(scaledAttack.release());
+            auto scaledBandage = scaleItem(&ItemDB::Bandage, floor);
+            availableItems.push_back(scaledBandage.release());
         }
         void addItem(ItemData* data) { availableItems.push_back(data); }
         void buyItem(int index) 
