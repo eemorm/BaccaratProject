@@ -21,6 +21,10 @@ class Game
         sf::RenderWindow& window; // window; comes from main.cpp; passed by reference for rendering
         GameStateManager states; // GameStateManager to handle different game states
         sf::Clock clock; // game clock for delta time calculation and timing in the game
+
+        sf::Image icon;
+        bool iconLoaded = false;
+        bool iconSet = false;
     public:
         // constructor to initialize window and set initial game state
         Game(sf::RenderWindow& w) : window(w)
@@ -29,6 +33,11 @@ class Game
         }
         void run() // main game loop, extracted from main.cpp for better organization
         {
+            if (!iconLoaded)
+            {
+                iconLoaded = icon.loadFromFile("textures/Icons/Croupier.png");
+            }
+
             while (window.isOpen())
             {
                 sf::Event event;
@@ -49,6 +58,16 @@ class Game
                 window.clear(); // clear window for new frame
                 states.draw(window); // draw frame to window
                 window.display(); // display frame on window
+
+                if (iconLoaded && !iconSet)
+                {
+                    window.setIcon(
+                        icon.getSize().x,
+                        icon.getSize().y,
+                        icon.getPixelsPtr()
+                    );
+                    iconSet = true;
+                }
             }
         }
 };

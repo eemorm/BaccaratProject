@@ -24,14 +24,6 @@ int main() // main function, where the flow of the game starts
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "Croupier", sf::Style::Default); // declare window
     window.setFramerateLimit(60); // set fps limit to avoid too much GPU stress
 
-    sf::Image icon;
-    icon.loadFromFile("textures/Icons/Croupier.png");
-    window.setIcon(
-        icon.getSize().x,
-        icon.getSize().y,
-        icon.getPixelsPtr()
-    );
-
     Game game(window); // declare Game object, which manages the overall game flow and StateManager
     game.run(); // run the game, which starts the game loop inside Game class
 
