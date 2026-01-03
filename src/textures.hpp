@@ -38,6 +38,7 @@ inline sf::Texture chainmailTexture;
 inline sf::Texture bandageTexture;
 inline sf::Texture potionTexture;
 inline sf::Texture largePotionTexture;
+inline sf::Texture attackTexture;
 
 // ---SPRITES---
 inline sf::Sprite table;
@@ -105,6 +106,8 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     if (!potionTexture.loadFromFile("textures/Items/potion.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!largePotionTexture.loadFromFile("textures/Items/largepotion.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!attackTexture.loadFromFile("textures/Items/attack.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
 
     // ---SET TEXTURES INTO SPRITES---

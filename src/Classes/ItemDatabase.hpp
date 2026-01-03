@@ -120,7 +120,7 @@ namespace ItemDB
         .description = "Allows an attack.",
         .price = 100,
         .type = ItemType::Attack,
-        .texture = &daggerTexture,
+        .texture = &attackTexture,
         .damage = 0,
         .armorValue = 0,
         .heal = 0,

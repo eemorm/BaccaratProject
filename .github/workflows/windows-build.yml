@@ -69,6 +69,11 @@ jobs:
 
           # SFML
           cp libs/SFML/bin/*.dll build/install/
+          
+      - name: Copy version file
+        shell: msys2 {0}
+        run: |
+          cp version.txt build/install/
 
       # 8. Upload portable folder with version
       - name: Upload EXE + Assets + DLLs

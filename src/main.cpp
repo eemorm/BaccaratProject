@@ -21,7 +21,7 @@ int main() // main function, where the flow of the game starts
     loadTextures(); // load game textures
     loadAudio(); // load game audio
 
-    sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "Croupier", sf::Style::Default); // declare window
+    sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "Croupier Demo", sf::Style::Default); // declare window
     window.setFramerateLimit(60); // set fps limit to avoid too much GPU stress
 
     Game game(window); // declare Game object, which manages the overall game flow and StateManager

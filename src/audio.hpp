@@ -79,7 +79,7 @@ inline void loadAudio()
 
     baccarat1.push_back(std::move(m_Space));
     baccarat1.push_back(std::move(m_sketch2));
-    baccarat1.push_back(std::move(m_daria));
+    //baccarat1.push_back(std::move(m_daria));
     baccarat1.push_back(std::move(m_ca2));
     baccarat1.push_back(std::move(m_dark2));
 

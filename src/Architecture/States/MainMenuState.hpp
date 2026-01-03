@@ -14,7 +14,9 @@
 
 // Standard Libraries
 #include <iostream>
-#include <vector>
+#include <vector>        
+#include <fstream>
+#include <string>
 
 class MainMenuState : public GameState
 {
@@ -28,6 +30,20 @@ class MainMenuState : public GameState
         UIButton playButton;
         UIButton tutorialButton;
         UIButton quitButton;
+
+        std::string loadVersion(const std::string& path)
+        {
+            std::ifstream file(path);
+            if (!file.is_open())
+            {
+                std::cerr << "Failed to open version file: " << path << "\n";
+                return "Unknown";
+            }
+
+            std::string version;
+            std::getline(file, version); // read the first line
+            return version;
+        }
     public:
         inline MainMenuState(sf::RenderWindow& w, GameStateManager* gsm) : 
             window(w), 
@@ -64,7 +80,7 @@ class MainMenuState : public GameState
             background.setFillColor(sf::Color(20, 20, 30));
 
             titleText.setFont(font);
-            titleText.setString("CROUPIER");
+            titleText.setString("CROUPIER DEMO");
             titleText.setCharacterSize(72);
             titleText.setFillColor(sf::Color::White);
  
@@ -73,13 +89,14 @@ class MainMenuState : public GameState
             titleText.setPosition(SCREEN_WIDTH / 2.f, 200.f);
 
             copyrightText.setFont(font);
-            copyrightText.setString("Copyright 2026 by Memento Studios");
+            std::string version = loadVersion("version.txt");
+            copyrightText.setString("Copyright 2026 by Memento Studios - Version " + version);
             copyrightText.setCharacterSize(24);
             copyrightText.setFillColor(sf::Color::White);
 
             bounds = copyrightText.getLocalBounds();
-            copyrightText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-            copyrightText.setPosition(1165, 725.f);
+            copyrightText.setOrigin(bounds.width, bounds.height);
+            copyrightText.setPosition(1325, 735.f);
 
             stopAllMusic();
             m_maintheme->play();
