@@ -38,7 +38,7 @@ namespace EnemyDB
     };
     inline EnemyData Thug 
     {
-        .texture = &reaperTexture,
+        .texture = &thugTexture,
         .name = "Thug",
         .maxHealth = 50,
         .armorValue = 2,
@@ -48,7 +48,7 @@ namespace EnemyDB
     };
     inline EnemyData Guard 
     {
-        .texture = &reaperTexture,
+        .texture = &guardTexture,
         .name = "Guard",
         .maxHealth = 60,
         .armorValue = 4,
@@ -58,7 +58,7 @@ namespace EnemyDB
     };
     inline EnemyData Executioner 
     {
-        .texture = &reaperTexture,
+        .texture = &executionerTexture,
         .name = "Executioner",
         .maxHealth = 85,
         .armorValue = 2,

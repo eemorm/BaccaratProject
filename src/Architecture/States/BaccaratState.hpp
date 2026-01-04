@@ -74,6 +74,7 @@ class BaccaratState : public GameState
         ChipStack* chosenStack = nullptr;
         sf::Sprite table; // table sprite
         sf::Sprite background;
+        sf::Sprite lantern;
         //-------------------
         std::vector<IObjectAction*> clickables; // declare clickables array to store references to clickable objects
 
@@ -135,7 +136,7 @@ class BaccaratState : public GameState
             ditherRT.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
             //---STATIC LIGHTS---
-            lighting.addStaticLight(Light({300, 400}, 1500.f, 0.7f, sf::Color::White, true));
+            lighting.addStaticLight(Light({300, 450}, 1500.f, 0.7f, sf::Color(255, 200, 140), true));
 
             //---SET UP WEALTH MANAGER---
             chipWealthManager.initializeManager();
@@ -159,6 +160,12 @@ class BaccaratState : public GameState
             background.setScale(2.67f, 2.67f);
             background.setPosition(0, 0);
             background.setColor(sf::Color(180, 180, 180, 255));
+
+            lantern.setTexture(lanternTexture);
+            lantern.setScale(3.f, 3.f);
+            sf::Vector2u lanternSize = lantern.getTexture()->getSize();
+            lantern.setOrigin(lanternSize.x / 2.f, lanternSize.y / 2.f);
+            lantern.setPosition(300, 450);
 
             theDealer.setScale(0.3f, 0.3f);
             sf::Vector2u texSize2 = theDealer.getTexture()->getSize();
@@ -453,6 +460,7 @@ class BaccaratState : public GameState
             worldRT.draw(background);
             worldRT.draw(theDealer);
             worldRT.draw(table); // draw table at first z-layer
+            worldRT.draw(lantern);
             worldRT.draw(deck); // draw deck on top of table
 
             // then draw player and banker hands

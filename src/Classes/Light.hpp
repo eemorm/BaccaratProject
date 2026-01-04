@@ -14,8 +14,8 @@ class Light
         bool flicker;
         float baseIntensity;
         float intensity;
-        float flickerDifference = 0.01f;
+        float flickerDifference = 0.04f;
         float flickerTimer = 0.f;
-        float flickerInterval = 0.1f;
+        float flickerInterval = 0.15f;
         sf::Color color;
 };

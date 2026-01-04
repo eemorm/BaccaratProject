@@ -22,7 +22,7 @@ namespace ItemDB
     {
         .name = "Sword",
         .description = "A sword, once used in a great war.",
-        .price = 135,
+        .price = 235,
         .type = ItemType::Weapon,
         .texture = &swordTexture,
         .damage = 12,
@@ -37,7 +37,7 @@ namespace ItemDB
         .price = 650,
         .type = ItemType::Weapon,
         .texture = &throwingCardTexture,
-        .damage = 17,
+        .damage = 19,
         .armorValue = 0,
         .heal = 0,
         .minFloor = 6

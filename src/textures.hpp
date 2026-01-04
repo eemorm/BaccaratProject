@@ -23,6 +23,7 @@ const unsigned int SCREEN_HEIGHT = 768;
 // ---TEXTURES FOR SPRITES---
 inline sf::Texture tableTexture;
 inline sf::Texture backgroundTexture;
+inline sf::Texture lanternTexture;
 inline sf::Texture theDealerBackgroundTexture;
 inline sf::Texture theDealerNumbersTexture;
 inline sf::Texture theDealerSuitsTexture;
@@ -31,6 +32,9 @@ inline sf::Texture chipsTexture;
 inline sf::Texture insectTexture;
 inline sf::Texture ratTexture;
 inline sf::Texture reaperTexture;
+inline sf::Texture thugTexture;
+inline sf::Texture guardTexture;
+inline sf::Texture executionerTexture;
 inline sf::Texture daggerTexture;
 inline sf::Texture swordTexture;
 inline sf::Texture throwingCardTexture;
@@ -77,6 +81,8 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!backgroundTexture.loadFromFile("textures/Core/baccaratbackground.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!lanternTexture.loadFromFile("textures/Core/lantern.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerBackgroundTexture.loadFromFile("textures/Cards/TheDealer/TheDealerBackground.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerNumbersTexture.loadFromFile("textures/Cards/TheDealer/TheDealerNumbers.png")) 
@@ -92,6 +98,12 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     if (!ratTexture.loadFromFile("textures/Enemies/rat.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!reaperTexture.loadFromFile("textures/Enemies/reaper.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!thugTexture.loadFromFile("textures/Enemies/thug.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!guardTexture.loadFromFile("textures/Enemies/guard.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!executionerTexture.loadFromFile("textures/Enemies/executioner.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!daggerTexture.loadFromFile("textures/Items/dagger.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
