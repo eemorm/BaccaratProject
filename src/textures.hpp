@@ -22,6 +22,7 @@ const unsigned int SCREEN_HEIGHT = 768;
 
 // ---TEXTURES FOR SPRITES---
 inline sf::Texture tableTexture;
+inline sf::Texture backgroundTexture;
 inline sf::Texture theDealerBackgroundTexture;
 inline sf::Texture theDealerNumbersTexture;
 inline sf::Texture theDealerSuitsTexture;
@@ -41,7 +42,6 @@ inline sf::Texture largePotionTexture;
 inline sf::Texture attackTexture;
 
 // ---SPRITES---
-inline sf::Sprite table;
 inline sf::Sprite theDealerBackground;
 inline std::vector<sf::Sprite> theDealerNumbers;
 inline std::vector<sf::Sprite> theDealerSuits;
@@ -74,6 +74,8 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
 
     // ---LOAD TEXTURES---
     if (!tableTexture.loadFromFile("textures/Core/table.png")) 
+    { std::cout << "Failed to load sprite sheet!\n"; }
+    if (!backgroundTexture.loadFromFile("textures/Core/baccaratbackground.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
     if (!theDealerBackgroundTexture.loadFromFile("textures/Cards/TheDealer/TheDealerBackground.png")) 
     { std::cout << "Failed to load sprite sheet!\n"; }
@@ -111,7 +113,6 @@ inline void loadTextures() // loads textures, used at start of game, puts textur
     { std::cout << "Failed to load sprite sheet!\n"; }
 
     // ---SET TEXTURES INTO SPRITES---
-    table.setTexture(tableTexture);
     theDealerBackground.setTexture(theDealerBackgroundTexture);
     splitTextures(&theDealerNumbersTexture, 13, &theDealerNumbers, bits);
     splitTextures(&theDealerSuitsTexture, 4, &theDealerSuits, bits);
